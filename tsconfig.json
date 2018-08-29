@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist/",
+		"noImplicitAny": true,
+		"target": "es6",
+		"allowJs": true,
+		"sourceMap": true,
+		"types": ["babylonjs", "node"]
+	}
+}
