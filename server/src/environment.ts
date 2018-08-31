@@ -1,25 +1,17 @@
-import Grid, { GridChunk, GridChunkBatch } from './grid'
-import { ViewExtent } from '../../shared/src/view-extent'
-import { Coords } from '../../shared/src/definitions'
+import TerrainManager from './terrainManager'
+import { ViewExtent } from '../../shared/src/view'
+import { EnvironmentState } from '../../shared/src/environment'
 import {
   getChunksInExtent,
   getChunksBySubtractingExtents
-} from '../../shared/src/view-extent'
-
-/**
- * This represents the environment state
- */
-export interface EnvironmentState {
-  chunks: GridChunkBatch
-  entities: any[] // TEMP
-}
+} from '../../shared/src/view'
 
 // the environment is made of a grid and entities
 // it holds a grid of material that can be altered, and a list of entities
 
 class Environment {
   entities: any[] // TEMP: use an entity manager instead
-  grid: Grid
+  grid: TerrainManager
 
   constructor() {
     this.entities = []

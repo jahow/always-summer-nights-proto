@@ -1,11 +1,7 @@
 import Environment from './environment'
 import { getTime } from '../../shared/src/utility'
 import { sendMessage } from './network'
-import {
-  compareExtents,
-  capExtent,
-  ViewExtent
-} from '../../shared/src/view-extent'
+import { compareExtents, capExtent, ViewExtent } from '../../shared/src/view'
 
 // in cells count
 const MAX_EXTENT_SIZE = 1000

@@ -3,7 +3,8 @@ const fs = require('fs')
 
 // set node modules as commonjs externals
 // see: https://jlongster.com/Backend-Apps-with-Webpack--Part-I
-var nodeModules = {}
+const nodeModules = {}
+
 fs
   .readdirSync('node_modules')
   .filter(function(x) {
@@ -32,7 +33,10 @@ module.exports = [
         },
         {
           test: /\.ts$/,
-          include: path.resolve(__dirname, 'client', 'src'),
+          include: [
+            path.resolve(__dirname, 'client', 'src'),
+            path.resolve(__dirname, 'shared', 'src')
+          ],
           use: 'ts-loader',
           exclude: /node_modules/
         }
@@ -48,6 +52,11 @@ module.exports = [
     },
     devServer: {
       contentBase: [path.resolve(__dirname, 'public')]
+    },
+    externals: {
+      oimo: true,
+      cannon: true,
+      earcut: true
     }
   },
   {
@@ -73,8 +82,8 @@ module.exports = [
         {
           test: /\.ts$/,
           include: [
-            path.resolve(__dirname, 'client', 'src'),
-            path.resolve(__dirname, 'server', 'src')
+            path.resolve(__dirname, 'server', 'src'),
+            path.resolve(__dirname, 'shared', 'src')
           ],
           use: 'ts-loader',
           exclude: /node_modules/

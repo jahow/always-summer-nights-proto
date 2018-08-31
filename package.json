@@ -5,6 +5,7 @@
   "main": "server/dist/bundle.js",
   "author": "gangreforge team",
   "dependencies": {
+    "babylonjs": "^3.2.0",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "mathjs": "^2.7.0",
@@ -25,7 +26,7 @@
     "prettier": "1.12.1",
     "standard": "^10.0.3",
     "ts-loader": "^4.0.1",
-    "typescript": "^2.7.2",
+    "typescript": "^2.9.2",
     "webpack": "^4.0.1",
     "webpack-cli": "^2.0.9"
   },
@@ -35,6 +36,5 @@
     "watch-restart": "nodemon --watch server/dist/bundle.js",
     "dev": "npm-run-all -p watch-build watch-restart",
     "start": "npm run build && node ./server/dist/bundle.js"
-  },
-  "globals": ["BABYLON"]
+  }
 }

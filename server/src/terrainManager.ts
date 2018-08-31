@@ -1,42 +1,13 @@
-import { Coords } from '../../shared/src/definitions'
-import { CHUNK_HEIGHT, CHUNK_WIDTH } from '../../shared/src/definitions'
+import {
+  GridChunk,
+  GridChunkBatch,
+  Coords,
+  CHUNK_HEIGHT,
+  CHUNK_WIDTH
+} from '../../shared/src/environment'
 import NoiseGenerator from '../../shared/src/noise.js'
 
 NoiseGenerator.seed(Math.random())
-
-enum SurfaceShape {
-  FLAT = 0,
-  UP_TOPLEFT = 1,
-  UP_TOPRIGHT = 2,
-  UP_BOTTOMRIGHT = 3,
-  UP_BOTTOMLEFT = 4,
-  UP_TOP = 5,
-  UP_RIGHT = 6,
-  UP_BOTTOM = 7,
-  UP_LEFT = 8,
-  DOWN_TOPLEFT = 9,
-  DOWN_TOPRIGHT = 10,
-  DOWN_BOTTOMRIGHT = 11,
-  DOWN_BOTTOMLEFT = 12,
-  DIAGONAL_FROMTOPLEFT = 13,
-  DIAGONAL_FROMBOTTOMLEFT = 14
-}
-
-interface CellColumnRange {
-  topShape?: SurfaceShape
-  bottomShape?: SurfaceShape
-  bottomStart: number
-  rangeSize: number
-  materialId: number
-}
-interface CellColumn {
-  ranges: CellColumnRange[]
-}
-
-// last element of a chunk is the revision number
-// a column can also be -1 (empty) or a material id
-export type GridChunk = Array<CellColumn | number>
-export type GridChunkBatch = { [index: string]: GridChunk }
 
 /**
  * A grid is a terrain chunk manager

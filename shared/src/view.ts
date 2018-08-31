@@ -1,6 +1,5 @@
-import { Coords } from './definitions'
+import { Coords, CHUNK_HEIGHT, CHUNK_WIDTH } from './environment'
 import { cap } from './utility'
-import { CHUNK_HEIGHT, CHUNK_WIDTH } from './definitions'
 
 /**
  * This represents a portion of the world seen by a player
