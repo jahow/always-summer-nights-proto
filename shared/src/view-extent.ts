@@ -1,5 +1,6 @@
 import { Coords } from './definitions'
 import { cap } from './utility'
+import { CHUNK_HEIGHT, CHUNK_WIDTH } from './definitions'
 
 /**
  * This represents a portion of the world seen by a player
@@ -13,14 +14,6 @@ export interface ViewExtent {
   minZ: number
   maxZ: number
 }
-
-// a chunk cell is approx. 0.5 meters
-// this means a human char will take up 1 cell on the ground
-// and 4 cells upwards
-export const METERS_PER_UNIT = 0.5
-
-export const CHUNK_WIDTH = 32
-export const CHUNK_HEIGHT = 128
 
 /**
  * Compare two extents; returns true if different

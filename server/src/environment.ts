@@ -5,9 +5,6 @@ import {
   getChunksInExtent,
   getChunksBySubtractingExtents
 } from '../../shared/src/view-extent'
-import NoiseGenerator from '../../shared/src/noise.js'
-
-NoiseGenerator.seed(Math.random())
 
 /**
  * This represents the environment state
@@ -26,23 +23,6 @@ class Environment {
 
   constructor() {
     this.entities = []
-    this.grid = new Grid(this.cellGenerationCallback.bind(this))
-  }
-
-  // this callback simply returns true if a cell is not empty
-  cellGenerationCallback(coords: Coords): boolean {
-    let groundHeight =
-      120 *
-      NoiseGenerator.perlin(0.002 * coords[0] + 0.002 * coords[2] + 100.1567, {
-        octaveCount: 2,
-        persistence: 0.6
-      })
-
-    if (coords[1] > groundHeight) {
-      return false
-    } else {
-      return true
-    }
   }
 
   getFullState(extent: ViewExtent): EnvironmentState {

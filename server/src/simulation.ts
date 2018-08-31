@@ -7,7 +7,7 @@ import {
   ViewExtent
 } from '../../shared/src/view-extent'
 
-// in celles count
+// in cells count
 const MAX_EXTENT_SIZE = 1000
 
 // the simulation object handles sending environment chunks to the clients,
