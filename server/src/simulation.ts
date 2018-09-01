@@ -20,7 +20,7 @@ class Simulation {
     this.time = 0
     this.lastUpdate = getTime()
 
-    // the simulation environment (grid, entities…)
+    // the simulation environment (terrain, entities…)
     this.environment = new Environment()
 
     // players must be notified whenever there's a change in the part of the

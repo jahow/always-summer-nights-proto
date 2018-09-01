@@ -10,10 +10,10 @@ import NoiseGenerator from '../../shared/src/noise.js'
 NoiseGenerator.seed(Math.random())
 
 /**
- * A grid is a terrain chunk manager
+ * A terrain manager is a terrain chunk manager
  * Chunks are stored using a key like so: 'x y z'
  */
-class Grid {
+class TerrainManager {
   savedChunks: GridChunkBatch
 
   constructor() {
@@ -41,11 +41,12 @@ class Grid {
 
   private getTerrainHeight(x: number, z: number): number {
     let groundHeight =
-      120 *
-      NoiseGenerator.perlin(0.002 * x + 0.002 * z + 100.1567, {
-        octaveCount: 2,
-        persistence: 0.6
-      })
+      40 *
+        NoiseGenerator.perlin(0.002 * x + 0.002 * z + 100.1567, {
+          octaveCount: 2,
+          persistence: 0.6
+        }) -
+      20
 
     return groundHeight
   }
@@ -77,4 +78,4 @@ class Grid {
   }
 }
 
-export default Grid
+export default TerrainManager

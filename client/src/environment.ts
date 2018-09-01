@@ -2,10 +2,10 @@ import TerrainManager from './terrainManager'
 import { EnvironmentState } from '../../shared/src/environment'
 
 export default class Environment {
-  grid: TerrainManager
+  terrain: TerrainManager
 
   constructor() {
-    this.grid = new TerrainManager()
+    this.terrain = new TerrainManager()
   }
 
   update() {
@@ -15,11 +15,11 @@ export default class Environment {
   // this applies a full or partial state to the current state
   // this will not delete anything from the environment
   applyState(state: EnvironmentState) {
-    this.grid.updateChunks(state.chunks)
+    this.terrain.updateChunks(state.chunks)
   }
 
   getGrid() {
-    return this.grid
+    return this.terrain
   }
 }
 

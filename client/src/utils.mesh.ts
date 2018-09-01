@@ -1,9 +1,20 @@
+import { VertexBuffer, Mesh, Scene, Node, Vector2 } from 'babylonjs'
+import Vector3 = BABYLON.Vector3
+
+export type Color = [number, number, number, number]
+
 interface LineWidth {
   left: number
   right: number
 }
 
-export class ExtendedMesh extends BABYLON.Mesh {
+/**
+ * Utilities for mesh generation
+ *
+ * Attention: all meshes are generated on the XZ plane at Y = 0
+ */
+
+export class ExtendedMesh extends Mesh {
   _tempArrays: {
     positions: Array<number>
     colors: Array<number>
@@ -14,9 +25,9 @@ export class ExtendedMesh extends BABYLON.Mesh {
 
   constructor(
     name: string,
-    scene?: BABYLON.Scene,
-    parent?: BABYLON.Node,
-    source?: BABYLON.Mesh,
+    scene?: Scene,
+    parent?: Node,
+    source?: Mesh,
     doNotCloneChildren?: boolean,
     clonePhysicsImpostor?: boolean
   ) {
@@ -44,11 +55,9 @@ export class ExtendedMesh extends BABYLON.Mesh {
   private _pushPositions(...positions: Array<number>) {
     if (this._tempArrays.positions === null) {
       this._tempArrays.positions =
-        (this.getVerticesData(
-          BABYLON.VertexBuffer.PositionKind,
-          false,
-          true
-        ) as Array<number>) || []
+        (this.getVerticesData(VertexBuffer.PositionKind, false, true) as Array<
+          number
+        >) || []
     }
     const stride = 3
     this._baseIndex = this._tempArrays.positions.length / stride
@@ -57,22 +66,18 @@ export class ExtendedMesh extends BABYLON.Mesh {
   private _pushColors(...colors: Array<number>) {
     if (this._tempArrays.colors === null) {
       this._tempArrays.colors =
-        (this.getVerticesData(
-          BABYLON.VertexBuffer.ColorKind,
-          false,
-          true
-        ) as Array<number>) || []
+        (this.getVerticesData(VertexBuffer.ColorKind, false, true) as Array<
+          number
+        >) || []
     }
     Array.prototype.push.apply(this._tempArrays.colors, colors)
   }
   private _pushUVs(...uvs: Array<number>) {
     if (this._tempArrays.uvs === null) {
       this._tempArrays.uvs =
-        (this.getVerticesData(
-          BABYLON.VertexBuffer.UVKind,
-          false,
-          true
-        ) as Array<number>) || []
+        (this.getVerticesData(VertexBuffer.UVKind, false, true) as Array<
+          number
+        >) || []
     }
     Array.prototype.push.apply(this._tempArrays.uvs, uvs)
   }
@@ -90,18 +95,15 @@ export class ExtendedMesh extends BABYLON.Mesh {
   commit() {
     if (this._tempArrays.positions !== null) {
       this.setVerticesData(
-        BABYLON.VertexBuffer.PositionKind,
+        VertexBuffer.PositionKind,
         this._tempArrays.positions
       )
     }
     if (this._tempArrays.colors !== null) {
-      this.setVerticesData(
-        BABYLON.VertexBuffer.ColorKind,
-        this._tempArrays.colors
-      )
+      this.setVerticesData(VertexBuffer.ColorKind, this._tempArrays.colors)
     }
     if (this._tempArrays.uvs !== null) {
-      this.setVerticesData(BABYLON.VertexBuffer.UVKind, this._tempArrays.uvs)
+      this.setVerticesData(VertexBuffer.UVKind, this._tempArrays.uvs)
     }
     if (this._tempArrays.indices !== null) {
       this.setIndices(this._tempArrays.indices)
@@ -115,9 +117,9 @@ export class ExtendedMesh extends BABYLON.Mesh {
   pushQuad(properties: {
     minX: number
     maxX: number
-    minY: number
-    maxY: number
-    color?: BABYLON.Color4
+    minZ: number
+    maxZ: number
+    color?: Color
     minU?: number
     maxU?: number
     minV?: number
@@ -125,37 +127,36 @@ export class ExtendedMesh extends BABYLON.Mesh {
   }) {
     this._pushPositions(
       properties.minX,
-      properties.minY,
       0,
+      properties.minZ,
       properties.maxX,
-      properties.minY,
       0,
+      properties.minZ,
       properties.maxX,
-      properties.maxY,
       0,
+      properties.maxZ,
       properties.minX,
-      properties.maxY,
-      0
+      0,
+      properties.maxZ
     )
-    const color =
-      properties.color || BABYLON.Color4.FromInts(255, 255, 255, 255)
+    const color = properties.color || [1, 1, 1, 1]
     this._pushColors(
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a,
-      color.r,
-      color.g,
-      color.b,
-      color.a
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3]
     )
     this._pushUVs(
       properties.minU || 0,
@@ -175,9 +176,9 @@ export class ExtendedMesh extends BABYLON.Mesh {
 
   // TODO: UV along line
   pushLine(properties: {
-    coords: { x: number; y: number }[]
+    coords: { x: number; z: number }[]
     width: number | LineWidth
-    color?: BABYLON.Color4
+    color?: Color
     closed?: boolean
   }) {
     if (properties.coords.length < 2) {
@@ -192,8 +193,7 @@ export class ExtendedMesh extends BABYLON.Mesh {
       coords.unshift(properties.coords[properties.coords.length - 1])
     }
 
-    const color =
-      properties.color || BABYLON.Color4.FromInts(255, 255, 255, 255)
+    const color = properties.color || [1, 1, 1, 1]
     const wLeft =
       (<LineWidth>properties.width).left !== undefined
         ? (<LineWidth>properties.width).left
@@ -212,47 +212,47 @@ export class ExtendedMesh extends BABYLON.Mesh {
       // line start vertices
       if (i === 0) {
         const next = coords[i + 1]
-        normal = new BABYLON.Vector2(
-          -next.y + current.y,
+        normal = new Vector3(
+          -next.z + current.z,
+          0,
           next.x - current.x
         ).normalize()
+        normal.set(-normal.z, 0, normal.x)
       } else {
         const previous = coords[i - 1]
-        normal = new BABYLON.Vector2(
-          -current.y + previous.y,
+        normal = new Vector3(
+          -current.z + previous.z,
+          0,
           current.x - previous.x
-        )
+        ).normalize()
         normal.normalize()
 
         // if not at line end: normal is average of both segments normals
         if (i < coords.length - 1) {
           const next = coords[i + 1]
           normal.addInPlace(
-            new BABYLON.Vector2(
-              -next.y + current.y,
-              next.x - current.x
-            ).normalize()
+            new Vector3(-next.z + current.z, 0, next.x - current.x).normalize()
           )
         }
       }
 
       this._pushPositions(
         current.x + normal.x * wLeft,
-        current.y + normal.y * wLeft,
         0,
+        current.z + normal.z * wLeft,
         current.x - normal.x * wRight,
-        current.y - normal.y * wRight,
-        0
+        0,
+        current.z - normal.z * wRight
       )
       this._pushColors(
-        color.r,
-        color.g,
-        color.b,
-        color.a,
-        color.r,
-        color.g,
-        color.b,
-        color.a
+        color[0],
+        color[1],
+        color[2],
+        color[3],
+        color[0],
+        color[1],
+        color[2],
+        color[3]
       )
       this._pushUVs(0, 0)
 

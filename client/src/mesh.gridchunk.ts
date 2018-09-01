@@ -1,4 +1,4 @@
-import { ExtendedMesh } from './utils.geom'
+import { ExtendedMesh } from './utils.mesh'
 import { getScene } from './globals'
 import { getGenericMaterial } from './mesh.materials'
 import { GridChunk, Coords } from '../../shared/src/environment'

@@ -1,14 +1,7 @@
-import {
-  Scene,
-  Material,
-  ShaderMaterial,
-  Color4,
-  Vector2,
-  DynamicTexture
-} from 'babylonjs'
+import { Scene, Material, ShaderMaterial, DynamicTexture } from 'babylonjs'
 import * as TinySDF from 'tiny-sdf'
 import { arrayFromRange } from './utils.misc'
-import { ExtendedMesh } from './utils.geom'
+import { ExtendedMesh, Color } from './utils.mesh'
 import { getScene } from './globals'
 import { AnchorType, RenderingGroup } from './enums'
 
@@ -153,13 +146,16 @@ function generateFontBundle(params: TextParams, scene?: Scene): FontBundle {
 export function generateTextMesh(options: {
   params: TextParams
   text: string
-  position: Vector2
   anchor: AnchorType
-  color?: Color4
+  color?: Color
   existingMesh?: ExtendedMesh
 }): ExtendedMesh {
   let mesh = options.existingMesh
-  let color_ = options.color || Color4.FromInts(255, 255, 255, 255)
+  if (!mesh) {
+    mesh = new ExtendedMesh('text', getScene())
+    mesh.renderingGroupId = RenderingGroup.OVERLAY
+  }
+  let color_ = options.color || [1, 1, 1, 1]
 
   // font bundle (reuse if available)
   const key = generateKey(options.params)
@@ -171,11 +167,7 @@ export function generateTextMesh(options: {
     bundles.push(bundle)
   }
 
-  // initialize mesh if needed
-  if (!mesh) {
-    mesh = new ExtendedMesh('text', getScene())
-    mesh.renderingGroupId = RenderingGroup.OVERLAY
-  }
+  // initialize mesh
   mesh.material = bundle.material
   mesh.visibility = 0.9999
   mesh.isPickable = false
@@ -189,8 +181,8 @@ export function generateTextMesh(options: {
     return prev + glyph.widthRatio * options.params.charHeight
   }, 0)
   const totalHeight = options.params.charHeight
-  let x = options.position.x - options.anchor[0] * totalWidth
-  let y = options.position.y - options.anchor[1] * totalHeight
+  let x = -options.anchor[0] * totalWidth
+  let z = -options.anchor[1] * totalHeight
 
   // push one quad per letter
   chars.forEach(char => {
@@ -199,8 +191,8 @@ export function generateTextMesh(options: {
     mesh.pushQuad({
       minX: x - buffer,
       maxX: x + width + buffer,
-      minY: y - buffer,
-      maxY: y + totalHeight + buffer,
+      minZ: z - buffer,
+      maxZ: z + totalHeight + buffer,
       color: color_,
       minU: glyph.minU,
       maxU: glyph.maxU,

@@ -1,4 +1,4 @@
-import { ExtendedMesh } from './utils.geom'
+import { ExtendedMesh } from './utils.mesh'
 import { AnchorType, AnchorTypes, RenderingGroup, ContentFlow } from './enums'
 import { getCanvas } from './globals'
 import { getOverlayManager } from './utils.overlay'
@@ -9,12 +9,12 @@ type LayoutDimension = string | number
 interface PanelComputedBounds {
   minX: number
   maxX: number
-  minY: number
-  maxY: number
+  minZ: number
+  maxZ: number
 }
 interface AnchorPosition {
   x: number
-  y: number
+  z: number
 }
 interface PanelPosition {
   top?: LayoutDimension
@@ -37,8 +37,8 @@ function getCanvasBounds(): PanelComputedBounds {
   return {
     minX: 0,
     maxX: getCanvas().width,
-    minY: 0,
-    maxY: getCanvas().height
+    minZ: 0,
+    maxZ: getCanvas().height
   }
 }
 function getCanvasSize(): PanelComputedSize {
@@ -103,8 +103,8 @@ function computeGutterBounds(
   return {
     minX: bounds.minX + gutter,
     maxX: bounds.maxX - gutter,
-    minY: bounds.minY + gutter,
-    maxY: bounds.maxY - gutter
+    minZ: bounds.minZ + gutter,
+    maxZ: bounds.maxZ - gutter
   }
 }
 function computeAnchoredBounds(
@@ -113,12 +113,12 @@ function computeAnchoredBounds(
   anchorPosition: AnchorPosition
 ): PanelComputedBounds {
   const minX = anchorPosition.x - computedSize.width * anchorType[0]
-  const minY = anchorPosition.y - computedSize.height * anchorType[1]
+  const minZ = anchorPosition.z - computedSize.height * anchorType[1]
   return {
     minX,
-    minY,
+    minZ,
     maxX: minX + computedSize.width,
-    maxY: minY + computedSize.height
+    maxZ: minZ + computedSize.height
   }
 }
 function computePositionedBounds(
@@ -132,7 +132,7 @@ function computePositionedBounds(
     height: MIN_SIZE
   }
   const frameWidth = frame.maxX - frame.minX
-  const frameHeight = frame.maxY - frame.minY
+  const frameHeight = frame.maxZ - frame.minZ
 
   const minX =
     position.left !== undefined
@@ -142,19 +142,19 @@ function computePositionedBounds(
     position.right !== undefined
       ? frame.minX + frameWidth - computeValue(position.right, frameWidth)
       : undefined
-  const minY =
+  const minZ =
     position.bottom !== undefined
-      ? frame.minY + computeValue(position.bottom, frameHeight)
+      ? frame.minZ + computeValue(position.bottom, frameHeight)
       : undefined
-  const maxY =
+  const maxZ =
     position.top !== undefined
-      ? frame.minY + frameHeight - computeValue(position.top, frameHeight)
+      ? frame.minZ + frameHeight - computeValue(position.top, frameHeight)
       : undefined
 
   // cannot have two indeterminate values on one axis
   if (
     (minX === undefined && maxX === undefined) ||
-    (minY === undefined && maxY === undefined)
+    (minZ === undefined && maxZ === undefined)
   ) {
     console.warn(
       'Invalid UI panel position: at least one dimension is indefinite',
@@ -163,16 +163,16 @@ function computePositionedBounds(
     return {
       minX: 0,
       maxX: 0,
-      minY: 0,
-      maxY: 0
+      minZ: 0,
+      maxZ: 0
     }
   }
 
   return {
     minX: minX !== undefined ? minX : maxX - mySize.width,
     maxX: maxX !== undefined ? maxX : minX + mySize.width,
-    minY: minY !== undefined ? minY : maxY - mySize.height,
-    maxY: maxY !== undefined ? maxY : minY + mySize.height
+    minZ: minZ !== undefined ? minZ : maxZ - mySize.height,
+    maxZ: maxZ !== undefined ? maxZ : minZ + mySize.height
   }
 }
 function computePositionedSize(
@@ -223,7 +223,7 @@ function computeAnchorPosition(
 ): AnchorPosition {
   return {
     x: bounds.minX + (bounds.maxX - bounds.minX) * anchorType[0],
-    y: bounds.minY + (bounds.maxY - bounds.minY) * anchorType[1]
+    z: bounds.minZ + (bounds.maxZ - bounds.minZ) * anchorType[1]
   }
 }
 function shiftAnchorPosition(
@@ -237,12 +237,16 @@ function shiftAnchorPosition(
       anchorPosition.x +
       (flow === ContentFlow.ROW
         ? shift.width + gutter
-        : flow === ContentFlow.ROW_INVERSE ? -shift.width - gutter : 0),
-    y:
-      anchorPosition.y +
+        : flow === ContentFlow.ROW_INVERSE
+          ? -shift.width - gutter
+          : 0),
+    z:
+      anchorPosition.z +
       (flow === ContentFlow.COL
         ? shift.height + gutter
-        : flow === ContentFlow.COL_INVERSE ? -shift.height - gutter : 0)
+        : flow === ContentFlow.COL_INVERSE
+          ? -shift.height - gutter
+          : 0)
   }
 }
 
@@ -408,27 +412,22 @@ export class OverlayPanel extends BasePanel {
     if (this.attrs.hasBackground) {
       this.mesh.pushQuad({
         ...this._lastBounds,
-        color: BABYLON.Color4.FromInts(100, 100, 100, 255)
+        color: [0.4, 0.4, 0.4, 1]
       })
     }
     if (this.attrs.hasBorder) {
       this.mesh.pushLine({
         coords: [
-          { x: this._lastBounds.minX, y: this._lastBounds.minY },
-          { x: this._lastBounds.minX, y: this._lastBounds.maxY },
-          { x: this._lastBounds.maxX, y: this._lastBounds.maxY },
-          { x: this._lastBounds.maxX, y: this._lastBounds.minY }
+          { x: this._lastBounds.minX, z: this._lastBounds.minZ },
+          { x: this._lastBounds.minX, z: this._lastBounds.maxZ },
+          { x: this._lastBounds.maxX, z: this._lastBounds.maxZ },
+          { x: this._lastBounds.maxX, z: this._lastBounds.minZ }
         ],
         width: {
           left: 4,
           right: 0
         },
-        color: BABYLON.Color4.FromInts(
-          70,
-          70,
-          70,
-          this.attrs.hasBackground ? 255 : 0
-        ),
+        color: [0.3, 0.3, 0.3, this.attrs.hasBackground ? 1 : 0],
         closed: true
       })
     }
@@ -496,15 +495,12 @@ export class OverlayText extends BasePanel {
     this.mesh = generateTextMesh({
       params: overlayTextParams,
       text: this.text,
-      position: new BABYLON.Vector2(
-        this._lastBounds.minX,
-        this._lastBounds.minY
-      ),
       anchor: AnchorTypes.BOTTOMLEFT,
-      color: BABYLON.Color4.FromInts(255, 255, 255, 255),
+      color: [1, 1, 1, 1],
       existingMesh: this.mesh
     })
-
-    this.mesh.position.z = this.zindex
+    this.mesh.position.x = this._lastBounds.minX
+    this.mesh.position.z = this._lastBounds.minZ
+    this.mesh.position.y = this.zindex
   }
 }

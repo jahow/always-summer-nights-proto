@@ -1,4 +1,4 @@
-import { Camera, Vector3, FreeCamera } from 'babylonjs'
+import { Camera, Vector3, UniversalCamera } from 'babylonjs'
 import { getCanvas, getEngine, getScene } from './globals'
 import { ViewExtent } from '../../shared/src/view'
 import { CHUNK_HEIGHT, CHUNK_WIDTH, Coords } from '../../shared/src/environment'
@@ -16,59 +16,44 @@ import { getEnvironment } from './environment'
 // unit per second
 const VIEW_PAN_SPEED = 100
 
-let camera: FreeCamera
+let camera: UniversalCamera
 
 /**
  * Init camera
  */
 export function initView() {
-  camera = new FreeCamera('main', Vector3.Zero(), getScene())
+  camera = new UniversalCamera(
+    'main',
+    new Vector3(0, CHUNK_HEIGHT, -CHUNK_WIDTH * 2),
+    getScene()
+  )
+  camera.setTarget(new Vector3(0, 0, 0))
 
-  moveView([0, CHUNK_HEIGHT, 0])
+  // TEMP: camera has default controls
+  getCamera().attachControl(getCanvas())
 }
 
 export function getCamera(): Camera {
   return camera
 }
 
-function updateCameraParams() {
-  // unused for now
-}
-
-/**
- * Set an ortho camera to point a target position
- */
-export function moveView(coords: Coords) {
-  camera.position.set(coords[0], coords[1], coords[2])
-  updateCameraParams()
-}
-
-/**
- * Same but with relative effect (values are added)
- */
-export function moveViewRelative(coordDiff: Coords) {
-  moveView([
-    coordDiff[0] + camera.position.x,
-    coordDiff[1] + camera.position.y,
-    coordDiff[2] + camera.position.z
-  ])
-}
-
 export function getViewExtent(): ViewExtent {
   const canvas = getCanvas()
 
   // TEMP / TODO: actual computation
-  let sizeX = CHUNK_WIDTH * 8
-  let sizeY = CHUNK_HEIGHT * 2
-  let sizeZ = CHUNK_WIDTH * 8
+  const sizeX = CHUNK_WIDTH * 4
+  const sizeY = CHUNK_HEIGHT * 2
+  const sizeZ = CHUNK_WIDTH * 4
+
+  const center = camera.getFrontPosition(CHUNK_WIDTH)
 
   const extent: ViewExtent = {
-    minX: camera.position.x - sizeX / 2,
-    maxX: camera.position.x + sizeX / 2,
-    minY: camera.position.y - sizeY / 2,
-    maxY: camera.position.y + sizeY / 2,
-    minZ: camera.position.z - sizeZ / 2,
-    maxZ: camera.position.z + sizeZ / 2
+    minX: center.x - sizeX / 2,
+    maxX: center.x + sizeX / 2,
+    minY: center.y - sizeY / 2,
+    maxY: center.y + sizeY / 2,
+    minZ: center.z - sizeZ / 2,
+    maxZ: center.z + sizeZ / 2
   }
 
   // round on chunks
@@ -82,25 +67,13 @@ export function getViewExtent(): ViewExtent {
   return extent
 }
 
-const coordDiff: Coords = [0, 0, 0]
 let previousExtent: ViewExtent, newExtent: ViewExtent
 let previousBuffered: ViewExtent, newBuffered: ViewExtent
 
-/**
- * Run this on the update loop to update the view according to pressed keys
- */
 export function updateView() {
-  // move camera
-  coordDiff[0] = 0
-  coordDiff[1] = 0
-  coordDiff[2] = 0
-  const delta = getEngine().getDeltaTime()
-  const diff = delta * 0.001 * VIEW_PAN_SPEED
-  if (isKeyPressed(KeyCode.DOWN)) coordDiff[2] -= diff
-  if (isKeyPressed(KeyCode.UP)) coordDiff[2] += diff
-  if (isKeyPressed(KeyCode.LEFT)) coordDiff[0] -= diff
-  if (isKeyPressed(KeyCode.RIGHT)) coordDiff[0] += diff
-  moveViewRelative(coordDiff)
+  return
+
+  // TODO: RESTORE THIS
 
   // check if extent has changed
   newExtent = getViewExtent()

@@ -9,7 +9,7 @@ export type Coords = [number, number, number]
 // and 4 cells upwards
 export const METERS_PER_UNIT = 0.5
 
-export const CHUNK_WIDTH = 32
+export const CHUNK_WIDTH = 64
 export const CHUNK_HEIGHT = 128
 
 export interface EnvironmentState {

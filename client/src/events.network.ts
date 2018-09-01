@@ -13,6 +13,7 @@ socket.on('connect', () => {
 socket.on('message', (message: any) => {
   switch (message.name) {
     case 'environmentState':
+      // console.log(message.args)
       handleEnvironmentUpdate(message.args)
       break
   }

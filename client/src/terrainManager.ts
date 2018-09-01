@@ -1,7 +1,7 @@
 import { GridChunkBatch, Coords } from '../../shared/src/environment'
 import { GridChunkMesh } from './mesh.gridchunk'
 
-export default class Grid {
+export default class TerrainManager {
   chunks: {
     [key: string]: GridChunkMesh // key is "<x> <y> <z>"
   }
@@ -11,7 +11,7 @@ export default class Grid {
   }
 
   /**
-   * Copy the encoded chunks in the collection into the grid
+   * Copy the encoded chunks in the collection into the terrain
    */
   updateChunks(encodedChunks: GridChunkBatch) {
     Object.keys(encodedChunks).forEach(key => {
@@ -20,7 +20,7 @@ export default class Grid {
   }
 
   /**
-   * Return a grid chunk, create it if absent from a coord key (<x> <y>)
+   * Return a terrain chunk, create it if absent from a coord key (<x> <y>)
    */
   getChunkByKey(key: string): GridChunkMesh {
     if (!this.chunks[key]) {

@@ -1,11 +1,12 @@
-import { initGlobals, getEngine, getScene } from './globals'
+import { initGlobals, getEngine, getScene, getCanvas } from './globals'
 import { getEnvironment } from './environment'
-import { initView, updateView } from './utils.view'
+import { getCamera, initView, updateView } from './utils.view'
 import { initInput, updateInputState, isKeyPressed } from './utils.input'
 import { toggleDebugMode } from './utils.misc'
 import { updateJobQueue } from './utils.jobs'
 import { getOverlayManager } from './utils.overlay'
 import { initUI } from './ui'
+import Graticule from './mesh.graticule'
 
 export default function init() {
   initGlobals()
@@ -20,11 +21,17 @@ export default function init() {
   initUI()
   getOverlayManager().handleResize()
 
+  const graticule = new Graticule()
+
+  // temp:
+
   getEngine().runRenderLoop(function() {
     // debug mode
     if (isKeyPressed('*', true)) {
       toggleDebugMode()
     }
+
+    graticule.update()
 
     getEnvironment().update()
     updateInputState()

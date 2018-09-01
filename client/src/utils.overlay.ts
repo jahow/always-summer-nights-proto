@@ -1,7 +1,6 @@
 import { getCanvas, getEngine, getScene } from './globals'
 import { BasePanel } from './utils.overlay.panel'
-import { ExtendedMesh } from './utils.geom'
-import { RenderingGroup, AnchorTypes } from './enums'
+import { AnchorTypes } from './enums'
 
 class OverlayManager {
   panelMaterial: BABYLON.ShaderMaterial
@@ -19,7 +18,7 @@ class OverlayManager {
     this.camera = new BABYLON.ArcRotateCamera(
       'overlay',
       -Math.PI / 2,
-      Math.PI / 2,
+      0,
       10,
       new BABYLON.Vector3(0, 0, 0),
       this.scene
@@ -85,13 +84,13 @@ class OverlayManager {
 
   handleResize() {
     this.camera.target.x = getCanvas().width / 2
-    this.camera.target.y = getCanvas().height / 2
+    this.camera.target.z = getCanvas().height / 2
 
     this.panels.forEach(panel => {
       panel.invalidate()
     })
     this.panels.filter(panel => !panel.hasParent()).forEach(panel => {
-      panel.regenerate(AnchorTypes.BOTTOMLEFT, { x: 0, y: 0 })
+      panel.regenerate(AnchorTypes.BOTTOMLEFT, { x: 0, z: 0 })
     })
   }
 

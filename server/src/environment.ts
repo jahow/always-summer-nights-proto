@@ -6,20 +6,21 @@ import {
   getChunksBySubtractingExtents
 } from '../../shared/src/view'
 
-// the environment is made of a grid and entities
-// it holds a grid of material that can be altered, and a list of entities
+// the environment is made of a terrain and entities
+// it holds a terrain of material that can be altered, and a list of entities
 
 class Environment {
   entities: any[] // TEMP: use an entity manager instead
-  grid: TerrainManager
+  terrain: TerrainManager
 
   constructor() {
     this.entities = []
+    this.terrain = new TerrainManager()
   }
 
   getFullState(extent: ViewExtent): EnvironmentState {
     return {
-      chunks: this.grid.getChunks(getChunksInExtent(extent)),
+      chunks: this.terrain.getChunks(getChunksInExtent(extent)),
       entities: []
     }
   }
@@ -29,7 +30,7 @@ class Environment {
     oldExtent: ViewExtent
   ): EnvironmentState {
     return {
-      chunks: this.grid.getChunks(
+      chunks: this.terrain.getChunks(
         getChunksBySubtractingExtents(oldExtent, newExtent)
       ),
       entities: []
