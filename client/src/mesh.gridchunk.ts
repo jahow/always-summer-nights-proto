@@ -1,20 +1,20 @@
 import { ExtendedMesh } from './utils.mesh'
 import { getScene } from './globals'
 import { getGenericMaterial } from './mesh.materials'
-import { GridChunk, Coords } from '../../shared/src/environment'
+import {
+  GridChunk,
+  Coords,
+  CHUNK_WIDTH,
+  CellColumn,
+  CellColumnRange
+} from '../../shared/src/environment'
 import { addJobToQueue } from './utils.jobs'
-
-export interface GridCell {
-  class: number
-  amount: number
-  pressure: number
-  temperature: number
-}
 
 export class GridChunkMesh {
   baseCoords: Coords
   mesh: ExtendedMesh
   revision: number
+  chunkInfo: GridChunk
 
   constructor(coords: Coords) {
     this.baseCoords = coords
@@ -32,17 +32,18 @@ export class GridChunkMesh {
   }
 
   updateChunk(chunk: GridChunk) {
-    const revision = chunk[chunk.length - 1] as number
-    if (revision === this.revision) {
+    // empty chunk
+    if (chunk[0] === -1) {
+      return
+    }
+
+    const revision = chunk[CHUNK_WIDTH * CHUNK_WIDTH] as number
+    if (revision === undefined || revision === this.revision) {
       return
     }
 
     this.revision = revision
-
-    // TODO
-    // for (let i = 0; i < CHUNK_SIZE * CHUNK_SIZE; i++) {
-    //   this.cells[i] = decodeMaterialInfo(encodedChunkInfo[i])
-    // }
+    this.chunkInfo = chunk
 
     addJobToQueue(() => {
       this.generateMesh()
@@ -50,24 +51,29 @@ export class GridChunkMesh {
   }
 
   generateMesh() {
-    // TODO
-    // let cell,
-    //   cellIndex = 0
-    // for (let y = 0; y < CHUNK_SIZE; y++) {
-    //   for (let x = 0; x < CHUNK_SIZE; x++) {
-    //     cell = this.cells[cellIndex]
-    //     this.mesh.pushQuad({
-    //       minX: x,
-    //       maxX: x + 1,
-    //       minY: y,
-    //       maxY: y + 1,
-    //       color: getCellColor(cell)
-    //     })
-    //     cellIndex++
-    //   }
-    // }
-    //
-    // this.mesh.commit()
+    let col: CellColumn
+    let range: CellColumnRange
+    let maxY: number
+    for (let z = 0; z < CHUNK_WIDTH; z++) {
+      for (let x = 0; x < CHUNK_WIDTH; x++) {
+        col = this.chunkInfo[x + z * CHUNK_WIDTH] as CellColumn
+        maxY = 0
+        if (col.ranges.length) {
+          range = col.ranges[col.ranges.length - 1]
+          maxY = range.bottomStart + range.rangeSize
+        }
+        this.mesh.pushQuad({
+          minX: x,
+          maxX: x + 1,
+          minZ: z,
+          maxZ: z + 1,
+          y: maxY,
+          color: [0.4, 0.7, 0.4, 1]
+        })
+      }
+    }
+
+    this.mesh.commit()
   }
 
   dispose() {

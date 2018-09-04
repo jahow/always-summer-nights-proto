@@ -2,6 +2,7 @@ import Environment from './environment'
 import { getTime } from '../../shared/src/utility'
 import { sendMessage } from './network'
 import { compareExtents, capExtent, ViewExtent } from '../../shared/src/view'
+import { encodeEnvironmentState } from '../../shared/src/environment'
 
 // in cells count
 const MAX_EXTENT_SIZE = 1000
@@ -72,7 +73,9 @@ class Simulation {
       sendMessage(
         playerId,
         'environmentState',
-        this.environment.getPartialState(newExtent, v.viewExtent)
+        encodeEnvironmentState(
+          this.environment.getPartialState(newExtent, v.viewExtent)
+        )
       )
       v.viewExtent = newExtent
     }

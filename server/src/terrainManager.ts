@@ -42,7 +42,7 @@ class TerrainManager {
   private getTerrainHeight(x: number, z: number): number {
     let groundHeight =
       40 *
-        NoiseGenerator.perlin(0.002 * x + 0.002 * z + 100.1567, {
+        NoiseGenerator.perlin(0.004 * x + 100.1567, 0.004 * z + 88.8783, {
           octaveCount: 2,
           persistence: 0.6
         }) -

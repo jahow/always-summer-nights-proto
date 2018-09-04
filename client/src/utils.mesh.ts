@@ -119,6 +119,7 @@ export class ExtendedMesh extends Mesh {
     maxX: number
     minZ: number
     maxZ: number
+    y?: number
     color?: Color
     minU?: number
     maxU?: number
@@ -127,16 +128,16 @@ export class ExtendedMesh extends Mesh {
   }) {
     this._pushPositions(
       properties.minX,
-      0,
+      properties.y || 0,
       properties.minZ,
       properties.maxX,
-      0,
+      properties.y || 0,
       properties.minZ,
       properties.maxX,
-      0,
+      properties.y || 0,
       properties.maxZ,
       properties.minX,
-      0,
+      properties.y || 0,
       properties.maxZ
     )
     const color = properties.color || [1, 1, 1, 1]

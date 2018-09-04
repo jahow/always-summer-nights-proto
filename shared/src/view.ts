@@ -75,13 +75,18 @@ export function getChunksBySubtractingExtents(
   const baseX = Math.floor(extent2.minX / CHUNK_WIDTH) * CHUNK_WIDTH
   const baseY = Math.floor(extent2.minY / CHUNK_HEIGHT) * CHUNK_HEIGHT
   const baseZ = Math.floor(extent2.minZ / CHUNK_WIDTH) * CHUNK_WIDTH
-  let x, y, z, coord: Coords
+  let x,
+    y,
+    z,
+    coord: Coords = [0, 0, 0]
   for (x = baseX; x <= extent2.maxX; x += CHUNK_WIDTH) {
-    for (z = baseZ; z <= extent2.maxZ; z += CHUNK_WIDTH) {
-      for (y = baseY; y <= extent2.maxY; y += CHUNK_HEIGHT) {
-        coord = [x, y, z]
+    for (y = baseY; y <= extent2.maxY; y += CHUNK_HEIGHT) {
+      for (z = baseZ; z <= extent2.maxZ; z += CHUNK_WIDTH) {
+        coord[0] = x
+        coord[1] = y
+        coord[2] = z
         if (isCoordInExtent(coord, extent1)) continue
-        coords.push([x, y, z])
+        coords.push(coord.slice() as Coords)
       }
     }
   }

@@ -1,4 +1,9 @@
-import { GridChunkBatch, Coords } from '../../shared/src/environment'
+import {
+  GridChunkBatch,
+  Coords,
+  decodeGridChunk,
+  GridChunkBatchEncoded
+} from '../../shared/src/environment'
 import { GridChunkMesh } from './mesh.gridchunk'
 
 export default class TerrainManager {
@@ -13,10 +18,11 @@ export default class TerrainManager {
   /**
    * Copy the encoded chunks in the collection into the terrain
    */
-  updateChunks(encodedChunks: GridChunkBatch) {
-    Object.keys(encodedChunks).forEach(key => {
-      this.getChunkByKey(key).updateChunk(encodedChunks[key])
-    })
+  updateChunks(chunkBatch: GridChunkBatch) {
+    const keys = Object.keys(chunkBatch)
+    for (let i = 0; i < keys.length; i++) {
+      this.getChunkByKey(keys[i]).updateChunk(chunkBatch[keys[i]])
+    }
   }
 
   /**

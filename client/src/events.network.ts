@@ -1,6 +1,9 @@
 import * as io from 'socket.io-client'
 import { getEnvironment } from './environment'
-import { EnvironmentState } from '../../shared/src/environment'
+import {
+  decodeEnvironmentState,
+  EnvironmentStateEncoded
+} from '../../shared/src/environment'
 import { getViewExtent } from './utils.view'
 
 // socket init
@@ -13,7 +16,6 @@ socket.on('connect', () => {
 socket.on('message', (message: any) => {
   switch (message.name) {
     case 'environmentState':
-      // console.log(message.args)
       handleEnvironmentUpdate(message.args)
       break
   }
@@ -31,7 +33,8 @@ export function handleViewMove() {
 
 // DOWNSTREAM EVENTS
 
-export function handleEnvironmentUpdate(state: EnvironmentState) {
+export function handleEnvironmentUpdate(state: EnvironmentStateEncoded) {
   console.log('network event: environment state')
-  getEnvironment().applyState(state)
+  console.log(state)
+  getEnvironment().applyState(decodeEnvironmentState(state))
 }

@@ -24,7 +24,7 @@ let camera: UniversalCamera
 export function initView() {
   camera = new UniversalCamera(
     'main',
-    new Vector3(0, CHUNK_HEIGHT, -CHUNK_WIDTH * 2),
+    new Vector3(0, CHUNK_HEIGHT, -CHUNK_WIDTH * 4),
     getScene()
   )
   camera.setTarget(new Vector3(0, 0, 0))
@@ -71,10 +71,6 @@ let previousExtent: ViewExtent, newExtent: ViewExtent
 let previousBuffered: ViewExtent, newBuffered: ViewExtent
 
 export function updateView() {
-  return
-
-  // TODO: RESTORE THIS
-
   // check if extent has changed
   newExtent = getViewExtent()
   if (!previousExtent || compareExtents(newExtent, previousExtent)) {
@@ -83,14 +79,7 @@ export function updateView() {
 
   // release meshes outside of previous extent (with buffer)
   if (previousExtent) {
-    previousBuffered = copyExtent(previousExtent, previousBuffered)
-    addBufferToExtent(previousBuffered, CHUNK_WIDTH * 3)
-    newBuffered = copyExtent(newExtent, newBuffered)
-    addBufferToExtent(newBuffered, CHUNK_WIDTH * 3)
-    const toRelease = getChunksBySubtractingExtents(
-      newBuffered,
-      previousBuffered
-    )
+    const toRelease = getChunksBySubtractingExtents(newExtent, previousExtent)
     const grid = getEnvironment().getGrid()
     toRelease.forEach(coord => {
       grid.removeChunkByKey(`${coord[0]} ${coord[1]} ${coord[2]}`)
