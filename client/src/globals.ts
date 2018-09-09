@@ -7,7 +7,7 @@ let scene: Scene
 export function initGlobals() {
   canvas = document.getElementById('render-target') as HTMLCanvasElement
   engine = new Engine(canvas, true)
-  engine.setDepthBuffer(false)
+  engine.setDepthBuffer(true)
   scene = new Scene(engine)
 }
 

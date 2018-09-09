@@ -64,6 +64,14 @@ export interface EnvironmentStateEncoded {
   e?: any[]
 }
 
+export function chunkCoordsToKey(x: number, y: number, z: number): string {
+  return `${x} ${y} ${z}`
+}
+
+export function chunkKeyToCoords(key: string): Coords {
+  return key.split(' ').map(c => parseInt(c)) as Coords
+}
+
 /**
  * Pushes data in the given array, representing the cell column; a column is
  * represented by 1 number

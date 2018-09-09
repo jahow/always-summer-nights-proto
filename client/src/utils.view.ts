@@ -1,7 +1,12 @@
 import { Camera, Vector3, UniversalCamera } from 'babylonjs'
 import { getCanvas, getEngine, getScene } from './globals'
 import { ViewExtent } from '../../shared/src/view'
-import { CHUNK_HEIGHT, CHUNK_WIDTH, Coords } from '../../shared/src/environment'
+import {
+  CHUNK_HEIGHT,
+  CHUNK_WIDTH,
+  chunkCoordsToKey,
+  Coords
+} from '../../shared/src/environment'
 import { isKeyPressed, KeyCode } from './utils.input'
 import { handleViewMove } from './events.network'
 import { getDebugMode } from './utils.misc'
@@ -68,7 +73,6 @@ export function getViewExtent(): ViewExtent {
 }
 
 let previousExtent: ViewExtent, newExtent: ViewExtent
-let previousBuffered: ViewExtent, newBuffered: ViewExtent
 
 export function updateView() {
   // check if extent has changed
@@ -81,9 +85,11 @@ export function updateView() {
   if (previousExtent) {
     const toRelease = getChunksBySubtractingExtents(newExtent, previousExtent)
     const grid = getEnvironment().getGrid()
-    toRelease.forEach(coord => {
-      grid.removeChunkByKey(`${coord[0]} ${coord[1]} ${coord[2]}`)
-    })
+    for (let i = 0; i < toRelease.length; i++) {
+      grid.removeChunkByKey(
+        chunkCoordsToKey(toRelease[i][0], toRelease[i][1], toRelease[i][2])
+      )
+    }
   }
 
   // copy extent

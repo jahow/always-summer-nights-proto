@@ -1,5 +1,6 @@
-import { VertexBuffer, Mesh, Scene, Node, Vector2 } from 'babylonjs'
+import { VertexBuffer, Mesh, Scene, Node } from 'babylonjs'
 import Vector3 = BABYLON.Vector3
+import { Coords } from '../../shared/src/environment'
 
 export type Color = [number, number, number, number]
 
@@ -114,12 +115,13 @@ export class ExtendedMesh extends Mesh {
     this._tempArrays.indices = null
   }
 
-  pushQuad(properties: {
+  pushFlatQuad(properties: {
     minX: number
     maxX: number
     minZ: number
     maxZ: number
     y?: number
+    backwards?: boolean
     color?: Color
     minU?: number
     maxU?: number
@@ -141,6 +143,67 @@ export class ExtendedMesh extends Mesh {
       properties.maxZ
     )
     const color = properties.color || [1, 1, 1, 1]
+    this._pushColors(
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3]
+    )
+    this._pushUVs(
+      properties.minU || 0,
+      properties.minV || 0,
+      properties.maxU || 0,
+      properties.minV || 0,
+      properties.maxU || 0,
+      properties.maxV || 0,
+      properties.minU || 0,
+      properties.maxV || 0
+    )
+
+    properties.backwards
+      ? this._pushIndices(0, 2, 1, 0, 3, 2)
+      : this._pushIndices(0, 1, 2, 0, 2, 3)
+
+    return this
+  }
+
+  pushQuad(properties: {
+    startPos: Coords
+    vector1: Coords
+    vector2: Coords
+    color?: Color
+    minU?: number
+    maxU?: number
+    minV?: number
+    maxV?: number
+  }) {
+    const color = properties.color || [1, 1, 1, 1]
+    this._pushPositions(
+      properties.startPos[0],
+      properties.startPos[1],
+      properties.startPos[2],
+      properties.startPos[0] + properties.vector1[0],
+      properties.startPos[1] + properties.vector1[1],
+      properties.startPos[2] + properties.vector1[2],
+      properties.startPos[0] + properties.vector1[0] + properties.vector2[0],
+      properties.startPos[1] + properties.vector1[1] + properties.vector2[1],
+      properties.startPos[2] + properties.vector1[2] + properties.vector2[2],
+      properties.startPos[0] + properties.vector2[0],
+      properties.startPos[1] + properties.vector2[1],
+      properties.startPos[2] + properties.vector2[2]
+    )
     this._pushColors(
       color[0],
       color[1],

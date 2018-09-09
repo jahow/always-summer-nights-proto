@@ -1,7 +1,8 @@
-import { Material, ShaderMaterial, Color4 } from 'babylonjs'
+import { StandardMaterial, Material, ShaderMaterial, Color4 } from 'babylonjs'
 import { getScene } from './globals'
 
 let genericMaterial: Material
+let terrainMaterial: Material
 
 /**
  * Will return a material using the generic shaders
@@ -18,9 +19,22 @@ export function getGenericMaterial(): Material {
         uniforms: ['worldViewProjection']
       }
     )
-
-    genericMaterial.backFaceCulling = false
+    genericMaterial.backFaceCulling = true
   }
 
   return genericMaterial
+}
+
+/**
+ * Will return a material using the generic shaders
+ * No texture, only position & color
+ */
+export function getTerrainMaterial(): Material {
+  if (!terrainMaterial) {
+    terrainMaterial = new StandardMaterial('generic', getScene())
+    terrainMaterial.backFaceCulling = true
+    // terrainMaterial.wireframe = true
+  }
+
+  return terrainMaterial
 }

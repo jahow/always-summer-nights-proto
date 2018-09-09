@@ -3,7 +3,8 @@ import {
   GridChunkBatch,
   Coords,
   CHUNK_HEIGHT,
-  CHUNK_WIDTH
+  CHUNK_WIDTH,
+  chunkCoordsToKey
 } from '../../shared/src/environment'
 import NoiseGenerator from '../../shared/src/noise.js'
 
@@ -26,15 +27,15 @@ class TerrainManager {
     const baseX = Math.floor(coords[0] / CHUNK_WIDTH) * CHUNK_WIDTH
     const baseY = Math.floor(coords[1] / CHUNK_HEIGHT) * CHUNK_HEIGHT
     const baseZ = Math.floor(coords[2] / CHUNK_WIDTH) * CHUNK_WIDTH
-    const saved = this.savedChunks[`${baseX} ${baseY} ${baseZ}`]
-    return saved || this.generateChunk(coords)
+    const saved = this.savedChunks[chunkCoordsToKey(baseX, baseY, baseZ)]
+    return saved || this.generateChunk(baseX, baseY, baseZ)
   }
 
   // return a batch of chunks from a list of coords
   getChunks(coordsList: Coords[]): GridChunkBatch {
     return coordsList.reduce((prev: GridChunkBatch, coords: Coords) => {
       const chunk = this.getChunk(coords)
-      prev[`${coords[0]} ${coords[1]} ${coords[2]}`] = chunk
+      prev[chunkCoordsToKey(coords[0], coords[1], coords[2])] = chunk
       return prev
     }, {})
   }
@@ -42,23 +43,26 @@ class TerrainManager {
   private getTerrainHeight(x: number, z: number): number {
     let groundHeight =
       40 *
-        NoiseGenerator.perlin(0.004 * x + 100.1567, 0.004 * z + 88.8783, {
-          octaveCount: 2,
-          persistence: 0.6
-        }) -
-      20
+      NoiseGenerator.perlin(0.003 * x + 100.1567, 0.003 * z + 88.8783, {
+        octaveCount: 4,
+        persistence: 0.6
+      })
 
     return groundHeight
   }
 
-  private generateChunk(coords: Coords): GridChunk {
+  private generateChunk(
+    baseX: number,
+    baseY: number,
+    baseZ: number
+  ): GridChunk {
     const chunk: GridChunk = new Array(CHUNK_WIDTH * CHUNK_WIDTH + 1)
     let x, z, height
     for (let i = 0; i < chunk.length; i++) {
-      x = i % CHUNK_WIDTH + coords[0]
-      z = Math.floor(i / CHUNK_WIDTH) + coords[2]
+      x = i % CHUNK_WIDTH + baseX
+      z = Math.floor(i / CHUNK_WIDTH) + baseZ
       height = this.getTerrainHeight(x, z)
-      if (height < coords[1]) {
+      if (height < baseY) {
         chunk[i] = -1
         continue
       }
@@ -67,7 +71,7 @@ class TerrainManager {
         ranges: [
           {
             bottomStart: 0,
-            rangeSize: Math.min(CHUNK_HEIGHT, Math.floor(height - coords[1])),
+            rangeSize: Math.min(CHUNK_HEIGHT - 1, Math.floor(height - baseY)),
             materialId: 0
           }
         ]
