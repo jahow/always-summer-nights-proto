@@ -9,7 +9,7 @@ import {
 } from '../../shared/src/environment'
 import { isKeyPressed, KeyCode } from './utils.input'
 import { handleViewMove } from './events.network'
-import { getDebugMode } from './utils.misc'
+import { debounce, getDebugMode } from './utils.misc'
 import {
   compareExtents,
   addBufferToExtent,

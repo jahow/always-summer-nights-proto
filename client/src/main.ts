@@ -22,7 +22,7 @@ export default function init() {
   initUI()
   getOverlayManager().handleResize()
 
-  const graticule = new Graticule()
+  // const graticule = new Graticule()
 
   let light = new HemisphericLight(
     'HemiLight',
@@ -36,7 +36,7 @@ export default function init() {
       toggleDebugMode()
     }
 
-    graticule.update()
+    // graticule.update()
 
     getEnvironment().update()
     updateInputState()

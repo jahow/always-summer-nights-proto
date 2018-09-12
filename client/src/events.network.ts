@@ -5,6 +5,7 @@ import {
   EnvironmentStateEncoded
 } from '../../shared/src/environment'
 import { getViewExtent } from './utils.view'
+import { debounce } from './utils.misc'
 
 // socket init
 const socket = io()
@@ -23,18 +24,18 @@ socket.on('message', (message: any) => {
 
 // UPSTREAM EVENTS
 
-export function handleViewMove() {
+export const handleViewMove = debounce(function() {
   console.log('network event: view move')
   socket.emit('message', {
     name: 'moveView',
     args: getViewExtent()
   })
-}
+}, 200)
 
 // DOWNSTREAM EVENTS
 
 export function handleEnvironmentUpdate(state: EnvironmentStateEncoded) {
   console.log('network event: environment state')
-  console.log(state)
+  // console.log(state)
   getEnvironment().applyState(decodeEnvironmentState(state))
 }

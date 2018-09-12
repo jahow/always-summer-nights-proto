@@ -19,10 +19,10 @@ const BUFFER_SIZE = 8000
 
 export class ExtendedMesh extends Mesh {
   _tempArrays: {
-    positions: Float32Array
-    colors: Float32Array
-    uvs: Float32Array
-    indices: Uint32Array
+    positions: Array<number>
+    colors: Array<number>
+    uvs: Array<number>
+    indices: Array<number>
   }
   _currentIndices: {
     positions: number
@@ -41,22 +41,16 @@ export class ExtendedMesh extends Mesh {
     clonePhysicsImpostor?: boolean
   ) {
     super(name, scene, parent, source, doNotCloneChildren, clonePhysicsImpostor)
-    this._tempArrays = {
-      positions: new Float32Array(BUFFER_SIZE * 3),
-      colors: new Float32Array(BUFFER_SIZE * 4),
-      uvs: new Float32Array(BUFFER_SIZE * 2),
-      indices: new Uint32Array(BUFFER_SIZE * 3)
-    }
-    this._currentIndices = {
-      positions: 0,
-      colors: 0,
-      uvs: 0,
-      indices: 0
-    }
-    this._baseIndex = 0
+    this.clearVertices()
   }
 
   clearVertices() {
+    this._tempArrays = {
+      positions: new Array<number>(),
+      colors: new Array<number>(),
+      uvs: new Array<number>(),
+      indices: new Array<number>()
+    }
     this._currentIndices = {
       positions: 0,
       colors: 0,
@@ -69,26 +63,24 @@ export class ExtendedMesh extends Mesh {
 
   private _pushPositions(...positions: Array<number>) {
     this._baseIndex = this._currentIndices.positions / 3
-    for (let i = 0; i < positions.length; i++) {
-      this._tempArrays.positions[this._currentIndices.positions++] =
-        positions[i]
-    }
+
+    Array.prototype.push.apply(this._tempArrays.positions, positions)
+    this._currentIndices.positions += positions.length
   }
   private _pushColors(...colors: Array<number>) {
-    for (let i = 0; i < colors.length; i++) {
-      this._tempArrays.colors[this._currentIndices.colors++] = colors[i]
-    }
+    Array.prototype.push.apply(this._tempArrays.colors, colors)
+    this._currentIndices.colors += colors.length
   }
   private _pushUVs(...uvs: Array<number>) {
-    for (let i = 0; i < uvs.length; i++) {
-      this._tempArrays.uvs[this._currentIndices.uvs++] = uvs[i]
-    }
+    Array.prototype.push.apply(this._tempArrays.uvs, uvs)
+    this._currentIndices.uvs += uvs.length
   }
   private _pushIndices(...indices: Array<number>) {
-    for (let i = 0; i < indices.length; i++) {
-      this._tempArrays.indices[this._currentIndices.indices++] =
-        indices[i] + this._baseIndex
-    }
+    Array.prototype.push.apply(
+      this._tempArrays.indices,
+      indices.map(i => i + +this._baseIndex)
+    )
+    this._currentIndices.indices += indices.length
   }
 
   // applies all pending modifications to the mesh

@@ -1,6 +1,8 @@
 /**
  * Returns an array of values from a range
  */
+import Timer = NodeJS.Timer
+
 export function arrayFromRange(min: number, max: number) {
   let min_ = Math.floor(min)
   let max_ = Math.floor(max)
@@ -21,4 +23,20 @@ export function toggleDebugMode() {
 }
 export function getDebugMode(): boolean {
   return debugMode
+}
+
+export function debounce(func: () => any, wait: number, immediate?: boolean) {
+  let timeout: number
+  return function() {
+    let context = this,
+      args = arguments
+    let later = function() {
+      timeout = null
+      if (!immediate) func.apply(context, args)
+    }
+    let callNow = immediate && !timeout
+    clearTimeout(timeout)
+    timeout = <number>setTimeout(later, wait)
+    if (callNow) func.apply(context, args)
+  }
 }
