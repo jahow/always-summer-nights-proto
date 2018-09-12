@@ -46,11 +46,11 @@ export function getViewExtent(): ViewExtent {
   const canvas = getCanvas()
 
   // TEMP / TODO: actual computation
-  const sizeX = CHUNK_WIDTH * 4
+  const sizeX = CHUNK_WIDTH * 8
   const sizeY = CHUNK_HEIGHT * 2
-  const sizeZ = CHUNK_WIDTH * 4
+  const sizeZ = CHUNK_WIDTH * 8
 
-  const center = camera.getFrontPosition(CHUNK_WIDTH)
+  const center = camera.getFrontPosition(CHUNK_WIDTH * 4)
 
   const extent: ViewExtent = {
     minX: center.x - sizeX / 2,

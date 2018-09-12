@@ -9,6 +9,8 @@ interface LineWidth {
   right: number
 }
 
+const BUFFER_SIZE = 8000
+
 /**
  * Utilities for mesh generation
  *
@@ -17,10 +19,16 @@ interface LineWidth {
 
 export class ExtendedMesh extends Mesh {
   _tempArrays: {
-    positions: Array<number>
-    colors: Array<number>
-    uvs: Array<number>
-    indices: Array<number>
+    positions: Float32Array
+    colors: Float32Array
+    uvs: Float32Array
+    indices: Uint32Array
+  }
+  _currentIndices: {
+    positions: number
+    colors: number
+    uvs: number
+    indices: number
   }
   _baseIndex: number
 
@@ -33,86 +41,62 @@ export class ExtendedMesh extends Mesh {
     clonePhysicsImpostor?: boolean
   ) {
     super(name, scene, parent, source, doNotCloneChildren, clonePhysicsImpostor)
-
     this._tempArrays = {
-      positions: null,
-      colors: null,
-      uvs: null,
-      indices: null
+      positions: new Float32Array(BUFFER_SIZE * 3),
+      colors: new Float32Array(BUFFER_SIZE * 4),
+      uvs: new Float32Array(BUFFER_SIZE * 2),
+      indices: new Uint32Array(BUFFER_SIZE * 3)
+    }
+    this._currentIndices = {
+      positions: 0,
+      colors: 0,
+      uvs: 0,
+      indices: 0
     }
     this._baseIndex = 0
   }
 
   clearVertices() {
-    this._tempArrays = {
-      positions: [],
-      colors: [],
-      uvs: [],
-      indices: []
+    this._currentIndices = {
+      positions: 0,
+      colors: 0,
+      uvs: 0,
+      indices: 0
     }
+    this._baseIndex = 0
     return this
   }
 
   private _pushPositions(...positions: Array<number>) {
-    if (this._tempArrays.positions === null) {
-      this._tempArrays.positions =
-        (this.getVerticesData(VertexBuffer.PositionKind, false, true) as Array<
-          number
-        >) || []
+    this._baseIndex = this._currentIndices.positions / 3
+    for (let i = 0; i < positions.length; i++) {
+      this._tempArrays.positions[this._currentIndices.positions++] =
+        positions[i]
     }
-    const stride = 3
-    this._baseIndex = this._tempArrays.positions.length / stride
-    Array.prototype.push.apply(this._tempArrays.positions, positions)
   }
   private _pushColors(...colors: Array<number>) {
-    if (this._tempArrays.colors === null) {
-      this._tempArrays.colors =
-        (this.getVerticesData(VertexBuffer.ColorKind, false, true) as Array<
-          number
-        >) || []
+    for (let i = 0; i < colors.length; i++) {
+      this._tempArrays.colors[this._currentIndices.colors++] = colors[i]
     }
-    Array.prototype.push.apply(this._tempArrays.colors, colors)
   }
   private _pushUVs(...uvs: Array<number>) {
-    if (this._tempArrays.uvs === null) {
-      this._tempArrays.uvs =
-        (this.getVerticesData(VertexBuffer.UVKind, false, true) as Array<
-          number
-        >) || []
+    for (let i = 0; i < uvs.length; i++) {
+      this._tempArrays.uvs[this._currentIndices.uvs++] = uvs[i]
     }
-    Array.prototype.push.apply(this._tempArrays.uvs, uvs)
   }
   private _pushIndices(...indices: Array<number>) {
-    if (this._tempArrays.indices === null) {
-      this._tempArrays.indices = (this.getIndices() as Array<number>).slice()
+    for (let i = 0; i < indices.length; i++) {
+      this._tempArrays.indices[this._currentIndices.indices++] =
+        indices[i] + this._baseIndex
     }
-    Array.prototype.push.apply(
-      this._tempArrays.indices,
-      indices.map(i => i + this._baseIndex)
-    )
   }
 
   // applies all pending modifications to the mesh
   commit() {
-    if (this._tempArrays.positions !== null) {
-      this.setVerticesData(
-        VertexBuffer.PositionKind,
-        this._tempArrays.positions
-      )
-    }
-    if (this._tempArrays.colors !== null) {
-      this.setVerticesData(VertexBuffer.ColorKind, this._tempArrays.colors)
-    }
-    if (this._tempArrays.uvs !== null) {
-      this.setVerticesData(VertexBuffer.UVKind, this._tempArrays.uvs)
-    }
-    if (this._tempArrays.indices !== null) {
-      this.setIndices(this._tempArrays.indices)
-    }
-    this._tempArrays.positions = null
-    this._tempArrays.colors = null
-    this._tempArrays.uvs = null
-    this._tempArrays.indices = null
+    this.setVerticesData(VertexBuffer.PositionKind, this._tempArrays.positions)
+    this.setVerticesData(VertexBuffer.ColorKind, this._tempArrays.colors)
+    this.setVerticesData(VertexBuffer.UVKind, this._tempArrays.uvs)
+    this.setIndices(this._tempArrays.indices, this._currentIndices.indices / 3)
   }
 
   pushFlatQuad(properties: {
