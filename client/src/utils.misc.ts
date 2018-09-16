@@ -36,7 +36,7 @@ export function debounce(func: () => any, wait: number, immediate?: boolean) {
     }
     let callNow = immediate && !timeout
     clearTimeout(timeout)
-    timeout = <number>setTimeout(later, wait)
+    timeout = setTimeout(later, wait) as any
     if (callNow) func.apply(context, args)
   }
 }

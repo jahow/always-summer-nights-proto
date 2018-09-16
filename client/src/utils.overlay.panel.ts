@@ -410,9 +410,9 @@ export class OverlayPanel extends BasePanel {
     // generate quad
     this.mesh.clearVertices()
     if (this.attrs.hasBackground) {
-      this.mesh.pushFlatQuad({
+      this.mesh.pushSimpleQuad({
         ...this._lastBounds,
-        color: [0.4, 0.4, 0.4, 1]
+        color: [0.5, 0.5, 0.5, 1]
       })
     }
     if (this.attrs.hasBorder) {
@@ -427,7 +427,7 @@ export class OverlayPanel extends BasePanel {
           left: 4,
           right: 0
         },
-        color: [0.3, 0.3, 0.3, this.attrs.hasBackground ? 1 : 0],
+        color: [0.4, 0.4, 0.4, this.attrs.hasBackground ? 1 : 0],
         closed: true
       })
     }

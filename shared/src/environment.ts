@@ -1,6 +1,6 @@
 /**
  * A set of coordinates in the world
- * X is forward, Z is right, Y is up
+ * X is right, Z is forward, Y is up
  */
 import { isNumber } from 'util'
 
@@ -30,6 +30,115 @@ export enum SurfaceShape {
   DOWN_BOTTOMLEFT = 12,
   DIAGONAL_FROMTOPLEFT = 13,
   DIAGONAL_FROMBOTTOMLEFT = 14
+}
+
+export function getShapeFromNeighbours(
+  topleft: boolean,
+  top: boolean,
+  topright: boolean,
+  right: boolean,
+  bottomright: boolean,
+  bottom: boolean,
+  bottomleft: boolean,
+  left: boolean
+): SurfaceShape {
+  if (
+    !topleft &&
+    !top &&
+    !topright &&
+    !right &&
+    !bottomright &&
+    !bottom &&
+    !bottomleft &&
+    !left
+  ) {
+    return SurfaceShape.FLAT
+  } else if (
+    topleft &&
+    !top &&
+    !topright &&
+    !right &&
+    !bottomright &&
+    !bottom &&
+    !bottomleft &&
+    !left
+  ) {
+    return SurfaceShape.UP_TOPLEFT
+  } else if (
+    !topleft &&
+    !top &&
+    topright &&
+    !right &&
+    !bottomright &&
+    !bottom &&
+    !bottomleft &&
+    !left
+  ) {
+    return SurfaceShape.UP_TOPRIGHT
+  } else if (
+    !topleft &&
+    !top &&
+    !topright &&
+    !right &&
+    bottomright &&
+    !bottom &&
+    !bottomleft &&
+    !left
+  ) {
+    return SurfaceShape.UP_BOTTOMRIGHT
+  } else if (
+    !topleft &&
+    !top &&
+    !topright &&
+    !right &&
+    !bottomright &&
+    !bottom &&
+    bottomleft &&
+    !left
+  ) {
+    return SurfaceShape.UP_BOTTOMLEFT
+  } else if (top && !right && !bottomright && !bottom && !bottomleft && !left) {
+    return SurfaceShape.UP_TOP
+  } else if (!topleft && !top && right && !bottom && !bottomleft && !left) {
+    return SurfaceShape.UP_RIGHT
+  } else if (!topleft && !top && !topright && !right && bottom && !left) {
+    return SurfaceShape.UP_BOTTOM
+  } else if (!top && !topright && !right && !bottomright && !bottom && left) {
+    return SurfaceShape.UP_LEFT
+  } else if (!topleft && right && bottomright && bottom) {
+    return SurfaceShape.DOWN_TOPLEFT
+  } else if (!topright && bottom && bottomleft && left) {
+    return SurfaceShape.DOWN_TOPRIGHT
+  } else if (topleft && top && !bottomright && left) {
+    return SurfaceShape.DOWN_BOTTOMRIGHT
+  } else if (top && topright && right && !bottomleft) {
+    return SurfaceShape.DOWN_BOTTOMLEFT
+  } else if (
+    topleft &&
+    !top &&
+    !topright &&
+    !right &&
+    bottomright &&
+    !bottom &&
+    !bottomleft &&
+    !left
+  ) {
+    return SurfaceShape.DIAGONAL_FROMTOPLEFT
+  } else if (
+    !topleft &&
+    !top &&
+    topright &&
+    !right &&
+    !bottomright &&
+    !bottom &&
+    bottomleft &&
+    !left
+  ) {
+    return SurfaceShape.DIAGONAL_FROMBOTTOMLEFT
+  } else {
+    console.log('unhandled shape case: ', arguments)
+    return SurfaceShape.FLAT
+  }
 }
 
 export interface CellColumnRange {
@@ -88,12 +197,13 @@ export function chunkKeyToCoords(key: string): Coords {
  */
 export function encodeCellColumn(col: CellColumn, array: CellColumnEncoded) {
   for (let i = 0; i < col.ranges.length; i++) {
+    debugger
     array.push(
-      ((col.ranges[i].topShape || SurfaceShape.FLAT) << 0) |
-        ((col.ranges[i].bottomShape || SurfaceShape.FLAT) << (1 * 8)) |
-        ((col.ranges[i].bottomStart & 0xff) << (2 * 8)) |
-        ((col.ranges[i].rangeSize & 0xff) << (4 * 8)) |
-        ((col.ranges[i].materialId & 0xffff) << (6 * 8))
+      (col.ranges[i].topShape || SurfaceShape.FLAT) |
+        ((col.ranges[i].bottomShape || SurfaceShape.FLAT) << (1 * 4)) |
+        ((col.ranges[i].bottomStart & 0xff) << (2 * 4)) |
+        ((col.ranges[i].rangeSize & 0xff) << (4 * 4)) |
+        ((col.ranges[i].materialId & 0xffff) << (6 * 4))
     )
   }
 }
@@ -111,10 +221,10 @@ export function decodeCellColumn(
   for (let i = 0; i < encodedCol.length; i++) {
     info = {
       topShape: encodedCol[i] & 0xf,
-      bottomShape: (encodedCol[i] >> (1 * 8)) & 0xf,
-      bottomStart: (encodedCol[i] >> (2 * 8)) & 0xff,
-      rangeSize: (encodedCol[i] >> (4 * 8)) & 0xff,
-      materialId: (encodedCol[i] >> (6 * 8)) & 0xffff
+      bottomShape: (encodedCol[i] >> (1 * 4)) & 0xf,
+      bottomStart: (encodedCol[i] >> (2 * 4)) & 0xff,
+      rangeSize: (encodedCol[i] >> (4 * 4)) & 0xff,
+      materialId: (encodedCol[i] >> (6 * 4)) & 0xffff
     }
     array.push(info)
   }

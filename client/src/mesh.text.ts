@@ -188,7 +188,7 @@ export function generateTextMesh(options: {
   chars.forEach(char => {
     let glyph = bundle.glyphs[char] || bundle.defaultGlyph
     let width = glyph.widthRatio * options.params.charHeight
-    mesh.pushFlatQuad({
+    mesh.pushSimpleQuad({
       minX: x - buffer,
       maxX: x + width + buffer,
       minZ: z - buffer,

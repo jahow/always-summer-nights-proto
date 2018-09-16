@@ -1,10 +1,12 @@
 import {
-  GridChunk,
-  GridChunkBatch,
-  Coords,
   CHUNK_HEIGHT,
   CHUNK_WIDTH,
-  chunkCoordsToKey
+  chunkCoordsToKey,
+  Coords,
+  getShapeFromNeighbours,
+  GridChunk,
+  GridChunkBatch,
+  SurfaceShape
 } from '../../shared/src/environment'
 import NoiseGenerator from '../../shared/src/noise.js'
 
@@ -67,12 +69,43 @@ class TerrainManager {
         continue
       }
 
+      // neighbours
+      const topleft =
+        Math.floor(this.getTerrainHeight(x - 1, z + 1)) > Math.floor(height)
+      const top =
+        Math.floor(this.getTerrainHeight(x, z + 1)) > Math.floor(height)
+      const topright =
+        Math.floor(this.getTerrainHeight(x + 1, z + 1)) > Math.floor(height)
+      const right =
+        Math.floor(this.getTerrainHeight(x + 1, z)) > Math.floor(height)
+      const bottomright =
+        Math.floor(this.getTerrainHeight(x + 1, z - 1)) > Math.floor(height)
+      const bottom =
+        Math.floor(this.getTerrainHeight(x, z - 1)) > Math.floor(height)
+      const bottomleft =
+        Math.floor(this.getTerrainHeight(x - 1, z - 1)) > Math.floor(height)
+      const left =
+        Math.floor(this.getTerrainHeight(x - 1, z)) > Math.floor(height)
+
       chunk[i] = {
         ranges: [
           {
             bottomStart: 0,
             rangeSize: Math.min(CHUNK_HEIGHT - 1, Math.floor(height - baseY)),
-            materialId: 0
+            materialId: 0,
+            topShape:
+              Math.floor(height - baseY) > CHUNK_HEIGHT - 1
+                ? SurfaceShape.FLAT
+                : getShapeFromNeighbours(
+                    topleft,
+                    top,
+                    topright,
+                    right,
+                    bottomright,
+                    bottom,
+                    bottomleft,
+                    left
+                  )
           }
         ]
       }

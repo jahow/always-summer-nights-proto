@@ -6,7 +6,7 @@ import { toggleDebugMode } from './utils.misc'
 import { updateJobQueue } from './utils.jobs'
 import { getOverlayManager } from './utils.overlay'
 import { initUI } from './ui'
-import { HemisphericLight } from 'babylonjs'
+import { DirectionalLight, Vector3 } from 'babylonjs'
 import Graticule from './mesh.graticule'
 
 export default function init() {
@@ -24,9 +24,9 @@ export default function init() {
 
   // const graticule = new Graticule()
 
-  let light = new HemisphericLight(
-    'HemiLight',
-    new BABYLON.Vector3(0, 1, 0),
+  let light = new DirectionalLight(
+    'light',
+    new Vector3(-0.2, -1, -0.4),
     getScene()
   )
 

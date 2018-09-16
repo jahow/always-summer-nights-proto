@@ -87,14 +87,14 @@ export default class Graticule {
     for (let x = this.minX; x <= this.maxX + CHUNK_WIDTH; x += CHUNK_WIDTH) {
       for (let z = this.minZ; z <= this.maxZ + CHUNK_WIDTH; z += CHUNK_WIDTH) {
         this.mesh
-          .pushFlatQuad({
+          .pushSimpleQuad({
             minX: x - 1,
             maxX: x,
             minZ: z - 4.5,
             maxZ: z + 3.5,
             color: [1, 1, 1, 0.5]
           })
-          .pushFlatQuad({
+          .pushSimpleQuad({
             minX: x - 4.5,
             maxX: x + 3.5,
             minZ: z - 1,

@@ -1,6 +1,6 @@
 import { VertexBuffer, Mesh, Scene, Node } from 'babylonjs'
 import Vector3 = BABYLON.Vector3
-import { Coords } from '../../shared/src/environment'
+import { Coords, SurfaceShape } from '../../shared/src/environment'
 
 export type Color = [number, number, number, number]
 
@@ -88,10 +88,11 @@ export class ExtendedMesh extends Mesh {
     this.setVerticesData(VertexBuffer.PositionKind, this._tempArrays.positions)
     this.setVerticesData(VertexBuffer.ColorKind, this._tempArrays.colors)
     this.setVerticesData(VertexBuffer.UVKind, this._tempArrays.uvs)
-    this.setIndices(this._tempArrays.indices, this._currentIndices.indices / 3)
+    this.setIndices(this._tempArrays.indices)
+    this.createNormals(false)
   }
 
-  pushFlatQuad(properties: {
+  pushSimpleQuad(properties: {
     minX: number
     maxX: number
     minZ: number
@@ -145,12 +146,138 @@ export class ExtendedMesh extends Mesh {
       properties.maxU || 0,
       properties.maxV || 0,
       properties.minU || 0,
-      properties.maxV || 0
+      properties.minV || 0
     )
 
     properties.backwards
       ? this._pushIndices(0, 2, 1, 0, 3, 2)
       : this._pushIndices(0, 1, 2, 0, 2, 3)
+
+    return this
+  }
+
+  pushTerrainQuad(properties: {
+    minX: number
+    maxX: number
+    minZ: number
+    maxZ: number
+    y?: number
+    backwards?: boolean
+    color?: Color
+    minU?: number
+    maxU?: number
+    minV?: number
+    maxV?: number
+    terrainShape?: SurfaceShape
+    terrainShapeAmplitude?: number
+  }) {
+    const yOffset1 =
+      properties.terrainShape === SurfaceShape.UP_BOTTOMLEFT ||
+      properties.terrainShape === SurfaceShape.UP_BOTTOM ||
+      properties.terrainShape === SurfaceShape.UP_LEFT ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPLEFT ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPRIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMRIGHT ||
+      properties.terrainShape === SurfaceShape.DIAGONAL_FROMBOTTOMLEFT
+        ? properties.terrainShapeAmplitude
+        : 0
+    const yOffset2 =
+      properties.terrainShape === SurfaceShape.UP_BOTTOMRIGHT ||
+      properties.terrainShape === SurfaceShape.UP_RIGHT ||
+      properties.terrainShape === SurfaceShape.UP_BOTTOM ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPLEFT ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPRIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMLEFT ||
+      properties.terrainShape === SurfaceShape.DIAGONAL_FROMTOPLEFT
+        ? properties.terrainShapeAmplitude
+        : 0
+    const yOffset3 =
+      properties.terrainShape === SurfaceShape.UP_TOPRIGHT ||
+      properties.terrainShape === SurfaceShape.UP_TOP ||
+      properties.terrainShape === SurfaceShape.UP_RIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPLEFT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMRIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMLEFT ||
+      properties.terrainShape === SurfaceShape.DIAGONAL_FROMBOTTOMLEFT
+        ? properties.terrainShapeAmplitude
+        : 0
+    const yOffset4 =
+      properties.terrainShape === SurfaceShape.UP_TOPLEFT ||
+      properties.terrainShape === SurfaceShape.UP_TOP ||
+      properties.terrainShape === SurfaceShape.UP_LEFT ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPRIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMRIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMLEFT ||
+      properties.terrainShape === SurfaceShape.DIAGONAL_FROMTOPLEFT
+        ? properties.terrainShapeAmplitude
+        : 0
+
+    // pushing: 1, 2, 3, 1, 3, 4
+    this._pushPositions(
+      properties.minX,
+      (properties.y || 0) + yOffset1,
+      properties.minZ,
+      properties.maxX,
+      (properties.y || 0) + yOffset2,
+      properties.minZ,
+      properties.maxX,
+      (properties.y || 0) + yOffset3,
+      properties.maxZ,
+      properties.minX,
+      (properties.y || 0) + yOffset1,
+      properties.minZ,
+      properties.maxX,
+      (properties.y || 0) + yOffset3,
+      properties.maxZ,
+      properties.minX,
+      (properties.y || 0) + yOffset4,
+      properties.maxZ
+    )
+    const color = properties.color || [1, 1, 1, 1]
+    this._pushColors(
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3],
+      color[0],
+      color[1],
+      color[2],
+      color[3]
+    )
+    this._pushUVs(
+      properties.minU || 0,
+      properties.minV || 0,
+      properties.maxU || 0,
+      properties.minV || 0,
+      properties.maxU || 0,
+      properties.maxV || 0,
+      properties.minU || 0,
+      properties.minV || 0,
+      properties.maxU || 0,
+      properties.maxV || 0,
+      properties.minU || 0,
+      properties.maxV || 0
+    )
+
+    properties.backwards
+      ? this._pushIndices(0, 2, 1, 3, 5, 4)
+      : this._pushIndices(0, 1, 2, 3, 4, 5)
 
     return this
   }

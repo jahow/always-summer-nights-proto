@@ -1,4 +1,4 @@
-import { Engine, Scene } from 'babylonjs'
+import { Engine, Scene, Color4 } from 'babylonjs'
 
 let engine: Engine
 let canvas: HTMLCanvasElement
@@ -9,6 +9,7 @@ export function initGlobals() {
   engine = new Engine(canvas, true)
   engine.setDepthBuffer(true)
   scene = new Scene(engine)
+  scene.clearColor = new Color4(0.67, 0.74, 0.75, 255)
 }
 
 export function getScene(): Scene {

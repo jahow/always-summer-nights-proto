@@ -81,7 +81,7 @@ export class GridChunkMesh {
 
           /*
           // bottom
-          this.mesh.pushFlatQuad({
+          this.mesh.pushSimpleQuad({
             minX: x,
             maxX: x + 1,
             minZ: z,
@@ -152,13 +152,15 @@ export class GridChunkMesh {
             col.ranges[i + 1].bottomStart > maxY
           ) {
             // top
-            this.mesh.pushFlatQuad({
+            this.mesh.pushTerrainQuad({
               minX: x,
               maxX: x + 1,
               minZ: z,
               maxZ: z + 1,
               y: maxY,
-              color
+              color,
+              terrainShape: range.topShape,
+              terrainShapeAmplitude: 1
             })
 
             tmpCrd1[0] = x
