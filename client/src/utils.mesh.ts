@@ -61,9 +61,10 @@ export class ExtendedMesh extends Mesh {
     return this
   }
 
-  private _pushPositions(...positions: Array<number>) {
+  private _setBaseIndex() {
     this._baseIndex = this._currentIndices.positions / 3
-
+  }
+  private _pushPositions(...positions: Array<number>) {
     Array.prototype.push.apply(this._tempArrays.positions, positions)
     this._currentIndices.positions += positions.length
   }
@@ -105,6 +106,7 @@ export class ExtendedMesh extends Mesh {
     minV?: number
     maxV?: number
   }) {
+    this._setBaseIndex()
     this._pushPositions(
       properties.minX,
       properties.y || 0,
@@ -212,27 +214,60 @@ export class ExtendedMesh extends Mesh {
         ? properties.terrainShapeAmplitude
         : 0
 
-    // pushing: 1, 2, 3, 1, 3, 4
+    // special cases
+    const splitQuad1to3 =
+      properties.terrainShape === SurfaceShape.UP_TOPLEFT ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPLEFT ||
+      properties.terrainShape === SurfaceShape.UP_BOTTOMRIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMRIGHT ||
+      properties.terrainShape === SurfaceShape.DIAGONAL_FROMBOTTOMLEFT
+    const splitQuad4to2 =
+      properties.terrainShape === SurfaceShape.UP_TOPRIGHT ||
+      properties.terrainShape === SurfaceShape.DOWN_TOPRIGHT ||
+      properties.terrainShape === SurfaceShape.UP_BOTTOMLEFT ||
+      properties.terrainShape === SurfaceShape.DOWN_BOTTOMLEFT ||
+      properties.terrainShape === SurfaceShape.DIAGONAL_FROMTOPLEFT
+
+    // pushing: 1, 2, [4, 2], 3, [1, 3], 4
+    this._setBaseIndex()
     this._pushPositions(
       properties.minX,
       (properties.y || 0) + yOffset1,
       properties.minZ,
       properties.maxX,
       (properties.y || 0) + yOffset2,
-      properties.minZ,
+      properties.minZ
+    )
+    splitQuad4to2 &&
+      this._pushPositions(
+        properties.minX,
+        (properties.y || 0) + yOffset4,
+        properties.maxZ,
+        properties.maxX,
+        (properties.y || 0) + yOffset2,
+        properties.minZ
+      )
+    this._pushPositions(
       properties.maxX,
       (properties.y || 0) + yOffset3,
-      properties.maxZ,
-      properties.minX,
-      (properties.y || 0) + yOffset1,
-      properties.minZ,
-      properties.maxX,
-      (properties.y || 0) + yOffset3,
-      properties.maxZ,
+      properties.maxZ
+    )
+    splitQuad1to3 &&
+      this._pushPositions(
+        properties.minX,
+        (properties.y || 0) + yOffset1,
+        properties.minZ,
+        properties.maxX,
+        (properties.y || 0) + yOffset3,
+        properties.maxZ
+      )
+    this._pushPositions(
       properties.minX,
       (properties.y || 0) + yOffset4,
       properties.maxZ
     )
+
+    // colors
     const color = properties.color || [1, 1, 1, 1]
     this._pushColors(
       color[0],
@@ -250,34 +285,54 @@ export class ExtendedMesh extends Mesh {
       color[0],
       color[1],
       color[2],
-      color[3],
-      color[0],
-      color[1],
-      color[2],
-      color[3],
-      color[0],
-      color[1],
-      color[2],
       color[3]
     )
+    if (splitQuad1to3 || splitQuad4to2) {
+      this._pushColors(
+        color[0],
+        color[1],
+        color[2],
+        color[3],
+        color[0],
+        color[1],
+        color[2],
+        color[3]
+      )
+    }
+
+    // uvs
     this._pushUVs(
       properties.minU || 0,
       properties.minV || 0,
       properties.maxU || 0,
-      properties.minV || 0,
-      properties.maxU || 0,
-      properties.maxV || 0,
-      properties.minU || 0,
-      properties.minV || 0,
-      properties.maxU || 0,
-      properties.maxV || 0,
-      properties.minU || 0,
-      properties.maxV || 0
+      properties.minV || 0
     )
+    splitQuad4to2 &&
+      this._pushUVs(
+        properties.minU || 0,
+        properties.maxV || 0,
+        properties.maxU || 0,
+        properties.minV || 0
+      )
+    this._pushUVs(properties.maxU || 0, properties.maxV || 0)
+    splitQuad1to3 &&
+      this._pushUVs(
+        properties.minU || 0,
+        properties.minV || 0,
+        properties.maxU || 0,
+        properties.maxV || 0
+      )
+    this._pushUVs(properties.minU || 0, properties.maxV || 0)
 
-    properties.backwards
-      ? this._pushIndices(0, 2, 1, 3, 5, 4)
-      : this._pushIndices(0, 1, 2, 3, 4, 5)
+    if (splitQuad1to3 || splitQuad4to2) {
+      properties.backwards
+        ? this._pushIndices(0, 2, 1, 3, 5, 4)
+        : this._pushIndices(0, 1, 2, 3, 4, 5)
+    } else {
+      properties.backwards
+        ? this._pushIndices(0, 2, 1, 0, 3, 2)
+        : this._pushIndices(0, 1, 2, 0, 2, 3)
+    }
 
     return this
   }
@@ -293,6 +348,7 @@ export class ExtendedMesh extends Mesh {
     maxV?: number
   }) {
     const color = properties.color || [1, 1, 1, 1]
+    this._setBaseIndex()
     this._pushPositions(
       properties.startPos[0],
       properties.startPos[1],
@@ -403,6 +459,7 @@ export class ExtendedMesh extends Mesh {
         }
       }
 
+      this._setBaseIndex()
       this._pushPositions(
         current.x + normal.x * wLeft,
         0,

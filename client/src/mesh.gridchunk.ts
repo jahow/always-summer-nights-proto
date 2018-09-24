@@ -147,11 +147,17 @@ export class GridChunkMesh {
             })
           }
           */
-          if (
-            i >= col.ranges.length - 1 ||
-            col.ranges[i + 1].bottomStart > maxY
-          ) {
-            // top
+
+          // top shape
+          // do nothing if we're not on the surface of the terrain!
+          alt = this.terrain.getSurfaceHeight(
+            x + this.baseCoords[0],
+            absMaxY,
+            z + this.baseCoords[2],
+            true
+          )
+
+          if (alt === null || alt > absMaxY) {
             this.mesh.pushTerrainQuad({
               minX: x,
               maxX: x + 1,
