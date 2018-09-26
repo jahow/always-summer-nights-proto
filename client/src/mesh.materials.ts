@@ -2,12 +2,13 @@ import {
   PBRSpecularGlossinessMaterial,
   Material,
   ShaderMaterial,
-  Color3
+  Color3,
+  Texture
 } from 'babylonjs'
 import { getScene } from './globals'
 
 let genericMaterial: Material
-let terrainMaterial: Material
+let terrainMaterial: PBRSpecularGlossinessMaterial
 
 /**
  * Will return a material using the generic shaders
@@ -34,13 +35,20 @@ export function getGenericMaterial(): Material {
  * Will return a material using the generic shaders
  * No texture, only position & color
  */
-export function getTerrainMaterial(): Material {
+export function getTerrainMaterial(): PBRSpecularGlossinessMaterial {
   if (!terrainMaterial) {
     terrainMaterial = new PBRSpecularGlossinessMaterial('generic', getScene())
-    ;(terrainMaterial as any).diffuseColor = new Color3(0.65, 0.9, 0.5)
-    ;(terrainMaterial as any).specularColor = new Color3(0.65, 0.9, 0.5)
-    ;(terrainMaterial as any).glossiness = 0.2
+    terrainMaterial.diffuseColor = new Color3(1, 1, 1)
+    terrainMaterial.specularColor = new Color3(0.3, 0.3, 0.3)
+    terrainMaterial.glossiness = 0.4
     terrainMaterial.backFaceCulling = true
+
+    const texture = new Texture('material0.png', getScene(), true)
+    texture.onLoadObservable.add((t: Texture) =>
+      t.updateSamplingMode(Texture.NEAREST_LINEAR_MIPLINEAR)
+    )
+    terrainMaterial.diffuseTexture = texture
+    terrainMaterial.specularGlossinessTexture = texture
     // terrainMaterial.wireframe = true
   }
 

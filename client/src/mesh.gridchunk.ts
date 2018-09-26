@@ -166,7 +166,11 @@ export class GridChunkMesh {
               y: maxY,
               color,
               terrainShape: range.topShape,
-              terrainShapeAmplitude: 1
+              terrainShapeAmplitude: 1,
+              minU: x / 16,
+              maxU: (x + 1) / 16,
+              minV: z / 16,
+              maxV: (z + 1) / 16
             })
 
             tmpCrd1[0] = x

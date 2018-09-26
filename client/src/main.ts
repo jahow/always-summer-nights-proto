@@ -6,7 +6,7 @@ import { toggleDebugMode } from './utils.misc'
 import { updateJobQueue } from './utils.jobs'
 import { getOverlayManager } from './utils.overlay'
 import { initUI } from './ui'
-import { DirectionalLight, Vector3 } from 'babylonjs'
+import { Color3, DirectionalLight, Vector3, HemisphericLight } from 'babylonjs'
 import Graticule from './mesh.graticule'
 
 export default function init() {
@@ -29,6 +29,12 @@ export default function init() {
     new Vector3(-0.2, -1, -0.4),
     getScene()
   )
+  let light2 = new DirectionalLight(
+    'light2',
+    new Vector3(0.2, 0.1, 0.4),
+    getScene()
+  )
+  light2.diffuse = new Color3(0.8, 0.6, 0.4)
 
   getEngine().runRenderLoop(function() {
     // debug mode
