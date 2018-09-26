@@ -32,8 +32,6 @@ export default class TerrainManager {
     // first update chunk data, then rebuild meshes
     for (let i = 0; i < keys.length; i++) {
       this.chunks[keys[i]] = chunkBatch[keys[i]]
-    }
-    for (let i = 0; i < keys.length; i++) {
       this.getChunkMeshByKey(keys[i]).updateChunk(chunkBatch[keys[i]])
     }
   }

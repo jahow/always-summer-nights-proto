@@ -9,7 +9,7 @@ import {
 } from '../../shared/src/environment'
 import { isKeyPressed, KeyCode } from './utils.input'
 import { handleViewMove } from './events.network'
-import { debounce, getDebugMode } from './utils.misc'
+import { debounce, getDebugMode, throttle } from './utils.misc'
 import {
   compareExtents,
   addBufferToExtent,
@@ -74,24 +74,28 @@ export function getViewExtent(): ViewExtent {
 
 let previousExtent: ViewExtent, newExtent: ViewExtent
 
-export function updateView() {
-  // check if extent has changed
-  newExtent = getViewExtent()
-  if (!previousExtent || compareExtents(newExtent, previousExtent)) {
-    handleViewMove()
-  }
-
-  // release meshes outside of previous extent (with buffer)
-  if (previousExtent) {
-    const toRelease = getChunksBySubtractingExtents(newExtent, previousExtent)
-    const grid = getEnvironment().getGrid()
-    for (let i = 0; i < toRelease.length; i++) {
-      grid.removeChunkByKey(
-        chunkCoordsToKey(toRelease[i][0], toRelease[i][1], toRelease[i][2])
-      )
+export const updateView = throttle(
+  function() {
+    // check if extent has changed
+    newExtent = getViewExtent()
+    if (!previousExtent || compareExtents(newExtent, previousExtent)) {
+      handleViewMove()
     }
-  }
 
-  // copy extent
-  previousExtent = newExtent
-}
+    // release meshes outside of previous extent (with buffer)
+    if (previousExtent) {
+      const toRelease = getChunksBySubtractingExtents(newExtent, previousExtent)
+      const grid = getEnvironment().getGrid()
+      for (let i = 0; i < toRelease.length; i++) {
+        grid.removeChunkByKey(
+          chunkCoordsToKey(toRelease[i][0], toRelease[i][1], toRelease[i][2])
+        )
+      }
+    }
+
+    previousExtent = newExtent
+  },
+  400,
+  false,
+  true
+)
