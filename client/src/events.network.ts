@@ -5,7 +5,7 @@ import {
   EnvironmentStateEncoded
 } from '../../shared/src/environment'
 import { getViewExtent } from './utils.view'
-import { debounce } from './utils.misc'
+import { throttle } from './utils.misc'
 
 // socket init
 const socket = io()
@@ -24,13 +24,18 @@ socket.on('message', (message: any) => {
 
 // UPSTREAM EVENTS
 
-export const handleViewMove = debounce(function() {
-  console.log('network event: view move')
-  socket.emit('message', {
-    name: 'moveView',
-    args: getViewExtent()
-  })
-}, 200)
+export const handleViewMove = throttle(
+  function() {
+    console.log('network event: view move')
+    socket.emit('message', {
+      name: 'moveView',
+      args: getViewExtent()
+    })
+  },
+  400,
+  false,
+  true
+)
 
 // DOWNSTREAM EVENTS
 

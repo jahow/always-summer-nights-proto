@@ -111,7 +111,12 @@ export default class TerrainManager {
         }
       }
 
-      currentY += goingUp ? CHUNK_HEIGHT : -CHUNK_HEIGHT
+      if (goingUp)
+        currentY =
+          Math.floor((currentY + CHUNK_HEIGHT) / CHUNK_HEIGHT) * CHUNK_HEIGHT
+      else
+        currentY =
+          Math.ceil((currentY - CHUNK_HEIGHT) / CHUNK_HEIGHT) * CHUNK_HEIGHT
       chunk = this.getChunk(x, currentY, z)
     }
 

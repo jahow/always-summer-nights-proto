@@ -40,3 +40,33 @@ export function debounce(func: () => any, wait: number, immediate?: boolean) {
     if (callNow) func.apply(context, args)
   }
 }
+
+export function throttle(
+  func: () => any,
+  wait: number,
+  leading?: boolean,
+  trailing?: boolean
+) {
+  let context = this,
+    args = arguments
+  let timeout: number
+  let previous = 0
+  let later = function() {
+    previous = Date.now()
+    timeout = null
+    func.apply(context, args)
+  }
+  return function() {
+    let now = Date.now()
+    if (!previous && !leading) previous = now
+    let remaining = wait - (now - previous)
+    args = arguments
+    if (remaining <= 0) {
+      clearTimeout(timeout)
+      timeout = null
+      previous = now
+    } else if (!timeout && trailing) {
+      timeout = setTimeout(later, remaining) as any
+    }
+  }
+}

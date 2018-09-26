@@ -21,6 +21,7 @@ export class GridChunkMesh {
   mesh: ExtendedMesh
   revision: number
   chunkInfo: GridChunk
+  disposed: boolean = false
 
   constructor(coords: Coords, terrain: TerrainManager) {
     this.terrain = terrain
@@ -52,6 +53,10 @@ export class GridChunkMesh {
   }
 
   generateMesh() {
+    if (this.disposed) {
+      return
+    }
+
     let col: CellColumn
     let range: CellColumnRange
     let minY: number, maxY: number
@@ -260,5 +265,6 @@ export class GridChunkMesh {
 
   dispose() {
     this.mesh.dispose()
+    this.disposed = true
   }
 }
