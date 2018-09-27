@@ -35,6 +35,7 @@
     "watch-build": "webpack --config webpack.config.js --watch",
     "watch-restart": "nodemon --watch server/dist/bundle.js",
     "dev": "npm-run-all -p watch-build watch-restart",
-    "start": "npm run build && node ./server/dist/bundle.js"
+    "start": "npm run build && node ./server/dist/bundle.js",
+    "heroku-postbuild": "npm run build"
   }
 }
