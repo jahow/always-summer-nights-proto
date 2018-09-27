@@ -27,7 +27,7 @@ app.use(function(req, res, next) {
 initNetwork(http)
 
 // SERVER LAUNCH
-var port = parseInt(argv.port) || parseInt(argv.p) || 8080
+var port = process.env.PORT || parseInt(argv.port) || parseInt(argv.p) || 5000
 
 var server = http.listen(port, function() {
 	var host = server.address().address
