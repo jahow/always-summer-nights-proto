@@ -16,16 +16,20 @@
     "tiny-sdf": "^1.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.40",
-    "@babel/preset-env": "^7.0.0-beta.40",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-typescript": "^7.3.3",
     "@types/babylonjs": "^2.4.1",
+    "@types/jest": "^24.0.13",
     "@types/node": "^10.9.3",
+    "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.0-beta.0",
+    "jest": "^24.8.0",
     "nodemon": "^1.17.3",
     "npm-run-all": "^4.1.2",
     "prettier": "1.12.1",
-    "ts-loader": "^4.0.1",
-    "typescript": "^2.9.2",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.4.5",
     "webpack": "^4.0.1",
     "webpack-cli": "^2.0.9"
   },
@@ -35,6 +39,7 @@
     "watch-restart": "nodemon --watch server/dist/bundle.js",
     "dev": "npm-run-all -p watch-build watch-restart",
     "start": "npm run build && node ./server/dist/bundle.js",
+    "test": "jest",
     "heroku-postbuild": "npm run build"
   }
 }

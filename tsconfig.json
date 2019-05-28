@@ -5,6 +5,7 @@
 		"target": "es6",
 		"allowJs": true,
 		"sourceMap": true,
-		"types": ["babylonjs", "node"]
+		"types": ["babylonjs", "node", "jest"],
+		"esModuleInterop": true
 	}
 }
