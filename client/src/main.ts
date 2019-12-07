@@ -8,8 +8,32 @@ import { getOverlayManager } from './utils.overlay'
 import { initUI } from './ui'
 import { Color3, DirectionalLight, Vector3, HemisphericLight } from 'babylonjs'
 import Graticule from './mesh.graticule'
+import Entity from './entity/entity'
+import GraticuleMeshComponent from './component/component.mesh.graticule'
+import App from './app/app'
+import Application from './app/app'
 
 export default function init() {
+  initGlobals()
+  initInput()
+  initView()
+
+  window.onresize = () => {
+    getEngine().resize()
+    getOverlayManager().handleResize()
+  }
+
+  initUI()
+  getOverlayManager().handleResize()
+
+  const graticule = new Entity()
+  graticule.addComponent(new GraticuleMeshComponent())
+
+  const app = new Application()
+  app.addEntity(graticule)
+}
+
+export function init_old() {
   initGlobals()
   initInput()
   initView()
