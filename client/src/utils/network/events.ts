@@ -1,10 +1,6 @@
 import * as io from 'socket.io-client'
-import { getEnvironment } from '../../environment'
-import {
-  decodeEnvironmentState,
-  EnvironmentStateEncoded
-} from '../../../../shared/src/environment'
-import { getViewExtent } from '../view'
+import {decodeEnvironmentState, EnvironmentStateEncoded} from '../../../../shared/src/environment'
+import {getViewExtent} from '../view'
 
 // socket init
 const socket = io()
@@ -36,5 +32,7 @@ export function handleViewMove() {
 export function handleEnvironmentUpdate(state: EnvironmentStateEncoded) {
   console.log('network event: environment state')
   // console.log(state)
-  getEnvironment().applyState(decodeEnvironmentState(state))
+
+  // todo: emit new state!
+  decodeEnvironmentState(state)
 }

@@ -1,10 +1,9 @@
 import {Camera, UniversalCamera, Vector3} from 'babylonjs'
 import {getCanvas, getScene} from '../globals'
-import {compareExtents, getChunksBySubtractingExtents, ViewExtent} from '../../../shared/src/view'
-import {CHUNK_HEIGHT, CHUNK_WIDTH, chunkCoordsToKey} from '../../../shared/src/environment'
+import {compareExtents, ViewExtent} from '../../../shared/src/view'
+import {CHUNK_HEIGHT, CHUNK_WIDTH} from '../../../shared/src/environment'
 import {handleViewMove} from './network/events'
 import {throttle} from './misc'
-import {getEnvironment} from '../environment'
 
 // unit per second
 const VIEW_PAN_SPEED = 100
@@ -69,18 +68,6 @@ export const updateView = throttle(
     if (!previousExtent || compareExtents(newExtent, previousExtent)) {
       handleViewMove()
     }
-
-    // release meshes outside of previous extent (with buffer)
-    if (previousExtent) {
-      const toRelease = getChunksBySubtractingExtents(newExtent, previousExtent)
-      const grid = getEnvironment().getGrid()
-      for (let i = 0; i < toRelease.length; i++) {
-        grid.removeChunkByKey(
-          chunkCoordsToKey(toRelease[i][0], toRelease[i][1], toRelease[i][2])
-        )
-      }
-    }
-
     previousExtent = newExtent
   },
   400,
