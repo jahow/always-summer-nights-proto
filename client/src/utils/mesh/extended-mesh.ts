@@ -1,6 +1,6 @@
 import { VertexBuffer, Mesh, Scene, Node } from 'babylonjs'
 import Vector3 = BABYLON.Vector3
-import { Coords, SurfaceShape } from '../../shared/src/environment'
+import { Coords, SurfaceShape } from '../../../../shared/src/environment'
 
 export type Color = [number, number, number, number]
 
@@ -148,7 +148,7 @@ export class ExtendedMesh extends Mesh {
       properties.maxU || 0,
       properties.maxV || 0,
       properties.minU || 0,
-      properties.minV || 0
+      properties.maxV || 0
     )
 
     properties.backwards

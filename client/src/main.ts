@@ -16,7 +16,6 @@ import Application from './app/app'
 export default function init() {
   initGlobals()
   initInput()
-  initView()
 
   window.onresize = () => {
     getEngine().resize()

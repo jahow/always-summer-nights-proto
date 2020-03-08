@@ -1,17 +1,16 @@
-import BaseSystem from './system.base';
+import BaseSystem from './system.base'
 import Entity from '../entity/entity'
 import {Color3, DirectionalLight, Vector3} from 'babylonjs'
-import {getScene, initGlobals} from '../globals'
-import {initInput} from '../utils.input'
-import {initView} from '../utils.view'
+import {getScene} from '../globals'
+import {initView, updateView} from '../utils.view'
 import BaseMeshComponent from '../component/component.mesh.base'
 
 export default class RenderSystem extends BaseSystem {
+  meshes: BABYLON.Mesh[] = []
+
   constructor() {
     super();
 
-    initGlobals()
-    initInput()
     initView()
     
     let light = new DirectionalLight(
@@ -28,12 +27,28 @@ export default class RenderSystem extends BaseSystem {
   }
 
   run(allEntities: Entity[]) {
+    updateView()
+
+    // render the meshes
+    const newMeshes = [];
     for (let entity of allEntities) {
       if (!entity.hasComponent(BaseMeshComponent)) continue;
 
-      // render the meshes
-      const mesh = entity.getComponent(BaseMeshComponent);
-      console.log(`rendering mesh from entity ${entity.getId()}!`);
+      const mesh = entity.getComponent<BaseMeshComponent>(BaseMeshComponent).getMesh();
+      if (mesh && this.meshes.indexOf(mesh) === -1) {
+        getScene().addMesh(mesh, true);
+      }
+      newMeshes.push(mesh);
     }
+
+    for (let mesh of this.meshes) {
+      if (newMeshes.indexOf(mesh) === -1) {
+        getScene().removeMesh(mesh, true);
+      }
+    }
+
+    this.meshes = newMeshes;
+
+    getScene().render()
   }
 }

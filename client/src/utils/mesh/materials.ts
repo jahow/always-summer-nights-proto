@@ -5,7 +5,7 @@ import {
   Color3,
   Texture
 } from 'babylonjs'
-import { getScene } from './globals'
+import { getScene } from '../../globals'
 
 let genericMaterial: Material
 let terrainMaterial: PBRSpecularGlossinessMaterial

@@ -1,6 +1,6 @@
-import { Color, ExtendedMesh } from './utils.mesh'
+import { Color, ExtendedMesh } from './utils/mesh/extended-mesh'
 import { getScene } from './globals'
-import { getTerrainMaterial } from './mesh.materials'
+import { getTerrainMaterial } from './utils/mesh/materials'
 import {
   GridChunk,
   Coords,

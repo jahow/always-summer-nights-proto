@@ -1,8 +1,8 @@
-import { ExtendedMesh } from './utils.mesh'
+import { ExtendedMesh } from './utils/mesh/extended-mesh'
 import { AnchorType, AnchorTypes, RenderingGroup, ContentFlow } from './enums'
 import { getCanvas } from './globals'
 import { getOverlayManager } from './utils.overlay'
-import { generateTextMesh, measureText, TextParams } from './mesh.text'
+import { generateTextMesh, measureText, TextParams } from './utils/mesh/text'
 
 type LayoutDimension = string | number
 
