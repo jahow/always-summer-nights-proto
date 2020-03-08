@@ -1,22 +1,10 @@
-import { Camera, Vector3, UniversalCamera } from 'babylonjs'
-import { getCanvas, getEngine, getScene } from './globals'
-import { ViewExtent } from '../../shared/src/view'
-import {
-  CHUNK_HEIGHT,
-  CHUNK_WIDTH,
-  chunkCoordsToKey,
-  Coords
-} from '../../shared/src/environment'
-import { isKeyPressed, KeyCode } from './utils.input'
-import { handleViewMove } from './events.network'
-import { debounce, getDebugMode, throttle } from './utils.misc'
-import {
-  compareExtents,
-  addBufferToExtent,
-  copyExtent,
-  getChunksBySubtractingExtents
-} from '../../shared/src/view'
-import { getEnvironment } from './environment'
+import {Camera, UniversalCamera, Vector3} from 'babylonjs'
+import {getCanvas, getScene} from '../globals'
+import {compareExtents, getChunksBySubtractingExtents, ViewExtent} from '../../../shared/src/view'
+import {CHUNK_HEIGHT, CHUNK_WIDTH, chunkCoordsToKey} from '../../../shared/src/environment'
+import {handleViewMove} from './network/events'
+import {throttle} from './misc'
+import {getEnvironment} from '../environment'
 
 // unit per second
 const VIEW_PAN_SPEED = 100

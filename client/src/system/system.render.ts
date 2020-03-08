@@ -2,7 +2,7 @@ import BaseSystem from './system.base'
 import Entity from '../entity/entity'
 import {Color3, DirectionalLight, Vector3} from 'babylonjs'
 import {getScene} from '../globals'
-import {initView, updateView} from '../utils.view'
+import {initView, updateView} from '../utils/view'
 import BaseMeshComponent from '../component/component.mesh.base'
 
 export default class RenderSystem extends BaseSystem {

@@ -8,7 +8,7 @@ import {
   CellColumn,
   CellColumnRange
 } from '../../shared/src/environment'
-import { addJobToQueue } from './utils.jobs'
+import { addJobToQueue } from './utils/jobs'
 import TerrainManager from './terrainManager'
 
 const tmpCrd1: Coords = [0, 0, 0]

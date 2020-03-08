@@ -1,14 +1,13 @@
 import {
-  GridChunkBatch,
-  Coords,
-  GridChunk,
-  CHUNK_WIDTH,
+  CellColumn,
   CHUNK_HEIGHT,
-  chunkKeyToCoords,
+  CHUNK_WIDTH,
   chunkCoordsToKey,
-  CellColumn
+  chunkKeyToCoords,
+  GridChunk,
+  GridChunkBatch,
 } from '../../shared/src/environment'
-import { GridChunkMesh } from './mesh.gridchunk'
+import {GridChunkMesh} from './mesh.gridchunk'
 
 export default class TerrainManager {
   chunks: {

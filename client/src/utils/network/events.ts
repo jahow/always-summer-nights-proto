@@ -1,10 +1,10 @@
 import * as io from 'socket.io-client'
-import { getEnvironment } from './environment'
+import { getEnvironment } from '../../environment'
 import {
   decodeEnvironmentState,
   EnvironmentStateEncoded
-} from '../../shared/src/environment'
-import { getViewExtent } from './utils.view'
+} from '../../../../shared/src/environment'
+import { getViewExtent } from '../view'
 
 // socket init
 const socket = io()
