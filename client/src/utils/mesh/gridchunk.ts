@@ -1,9 +1,15 @@
-import {Color, ExtendedMesh} from './extended-mesh'
-import {getScene} from '../../globals'
-import {getTerrainMaterial} from './materials'
-import {CellColumn, CellColumnRange, CHUNK_WIDTH, Coords, GridChunk} from '../../../../shared/src/environment'
-import {addJobToQueue} from '../jobs'
-import {getSurfaceHeight} from '../environment/terrain'
+import { Color, ExtendedMesh } from './extended-mesh'
+import { getScene } from '../../globals'
+import { getTerrainMaterial } from './materials'
+import {
+  CellColumn,
+  CellColumnRange,
+  CHUNK_WIDTH,
+  Coords,
+  GridChunk
+} from '../../../../shared/src/environment'
+import { addJobToQueue } from '../jobs'
+import { getSurfaceHeight } from '../environment/terrain'
 
 const tmpCrd1: Coords = [0, 0, 0]
 const tmpCrd2: Coords = [0, 0, 0]
@@ -16,7 +22,7 @@ export class GridChunkMesh {
   chunkInfo: GridChunk
   disposed: boolean = false
 
-  constructor(coords: Coords) {
+  constructor(coords: Coords, parent: BABYLON.Mesh) {
     this.baseCoords = coords
     this.mesh = new ExtendedMesh(
       `chunk ${coords[0]} ${coords[1]} ${coords[2]}`,
@@ -27,6 +33,7 @@ export class GridChunkMesh {
     this.mesh.position.y = coords[1]
     this.mesh.position.z = coords[2]
     this.mesh.isPickable = false
+    this.mesh.parent = parent
     this.revision = -1
   }
 

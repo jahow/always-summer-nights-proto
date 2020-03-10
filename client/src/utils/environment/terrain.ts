@@ -1,4 +1,10 @@
-import {CellColumn, CHUNK_HEIGHT, CHUNK_WIDTH, chunkCoordsToKey, GridChunk} from '../../../../shared/src/environment'
+import {
+  CellColumn,
+  CHUNK_HEIGHT,
+  CHUNK_WIDTH,
+  chunkCoordsToKey,
+  GridChunk
+} from '../../../../shared/src/environment'
 
 const chunks: {
   [key: string]: GridChunk
@@ -13,10 +19,10 @@ export function getSurfaceHeight(
   x: number,
   y: number,
   z: number,
-  goingUp?: boolean,
+  goingUp?: boolean
 ): number | null {
   let currentY = y
-  let chunk = this.getChunk(x, currentY, z)
+  let chunk = getChunk(x, currentY, z)
   let localX = x - Math.floor(x / CHUNK_WIDTH) * CHUNK_WIDTH
   let localY = currentY - Math.floor(currentY / CHUNK_HEIGHT) * CHUNK_HEIGHT
   let localZ = z - Math.floor(z / CHUNK_WIDTH) * CHUNK_WIDTH
@@ -61,7 +67,7 @@ export function getSurfaceHeight(
     else
       currentY =
         Math.ceil((currentY - CHUNK_HEIGHT) / CHUNK_HEIGHT) * CHUNK_HEIGHT
-    chunk = this.getChunk(x, currentY, z)
+    chunk = getChunk(x, currentY, z)
   }
 
   return null

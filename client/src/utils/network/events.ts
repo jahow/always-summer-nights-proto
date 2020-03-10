@@ -9,23 +9,33 @@ socket.on('connect', () => {
   console.log('connected as ' + socket.id)
 })
 
-socket.on('message', (message: any) => {
-  switch (message.name) {
-    case 'environmentState':
-      handleEnvironmentUpdate(message.args)
-      break
-  }
-})
+type EventPayload = any
+type EventMessage = { name: string, args: EventPayload }
+type EventHandler = (payload: any) => void
 
-// UPSTREAM EVENTS
+const handlers: {[key: string]: EventHandler[]} = {}
 
-export function handleViewMove() {
-  console.log('network event: view move', getViewExtent())
+// downstream events handler
+export function addEventHandler(downEventName: string, handler: EventHandler) {
+  const existing = handlers[downEventName] || []
+  handlers[downEventName] = [...existing, handler]
+}
+
+// upstream events
+export function sendEvent(upEventName: string, payload: EventPayload) {
   socket.emit('message', {
-    name: 'moveView',
-    args: getViewExtent()
+    name: upEventName,
+    args: payload
   })
 }
+
+socket.on('message', (message: EventMessage) => {
+  const myHandlers = handlers[message.name]
+  if (!myHandlers || !myHandlers.length) return
+  for (let i = 0; i < myHandlers.length; i++) {
+    myHandlers[i](message.args)
+  }
+})
 
 // DOWNSTREAM EVENTS
 

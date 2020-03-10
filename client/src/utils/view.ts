@@ -1,9 +1,9 @@
-import {Camera, UniversalCamera, Vector3} from 'babylonjs'
-import {getCanvas, getScene} from '../globals'
-import {compareExtents, ViewExtent} from '../../../shared/src/view'
-import {CHUNK_HEIGHT, CHUNK_WIDTH} from '../../../shared/src/environment'
-import {handleViewMove} from './network/events'
-import {throttle} from './misc'
+import { Camera, UniversalCamera, Vector3 } from 'babylonjs'
+import { getCanvas, getScene } from '../globals'
+import { compareExtents, ViewExtent } from '../../../shared/src/view'
+import { CHUNK_HEIGHT, CHUNK_WIDTH } from '../../../shared/src/environment'
+import { sendEvent } from './network/events'
+import { throttle } from './misc'
 
 // unit per second
 const VIEW_PAN_SPEED = 100
@@ -66,7 +66,7 @@ export const updateView = throttle(
     // check if extent has changed
     newExtent = getViewExtent()
     if (!previousExtent || compareExtents(newExtent, previousExtent)) {
-      handleViewMove()
+      sendEvent('moveView', getViewExtent())
     }
     previousExtent = newExtent
   },
