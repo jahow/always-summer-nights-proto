@@ -14,5 +14,14 @@ export default class TerrainEnvironmentComponent extends BaseEnvironmentComponen
     for (let key in newest.chunks) {
       this.terrainMesh.updateChunk(key, newest.chunks[key])
     }
+
+    // remove old chunks
+    if (previous) {
+      for (let key in previous.chunks) {
+        if (!newest.chunks[key]) {
+          this.terrainMesh.removeChunk(key)
+        }
+      }
+    }
   }
 }

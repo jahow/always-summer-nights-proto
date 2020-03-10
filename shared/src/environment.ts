@@ -287,3 +287,28 @@ export function decodeEnvironmentState(
     entities: state.e
   }
 }
+
+export function getChunkRevision(chunk: GridChunk) {
+  return chunk[CHUNK_WIDTH * CHUNK_WIDTH] as number
+}
+
+// most recent chunks are kept
+export function mergeEnvironmentStates(
+  stateA: EnvironmentState,
+  stateB: EnvironmentState
+): EnvironmentState {
+  const chunks = {
+    ...stateA.chunks
+  }
+  for (let key in stateB.chunks) {
+    const chunk = stateB.chunks[key]
+    const rev = getChunkRevision(chunk)
+    if (!stateA.chunks[key] || getChunkRevision(stateA.chunks[key]) < rev) {
+      chunks[key] = stateB.chunks[key]
+    }
+  }
+  return {
+    chunks,
+    entities: [...stateA.entities, ...stateB.entities]
+  }
+}
