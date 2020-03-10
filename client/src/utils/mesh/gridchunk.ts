@@ -6,6 +6,7 @@ import {
   CellColumnRange,
   CHUNK_WIDTH,
   Coords,
+  getChunkRevision,
   GridChunk
 } from '../../../../shared/src/environment'
 import { addJobToQueue } from '../jobs'
@@ -22,7 +23,7 @@ export class GridChunkMesh {
   chunkInfo: GridChunk
   disposed: boolean = false
 
-  constructor(coords: Coords, parent: BABYLON.Mesh) {
+  constructor(coords: Coords) {
     this.baseCoords = coords
     this.mesh = new ExtendedMesh(
       `chunk ${coords[0]} ${coords[1]} ${coords[2]}`,
@@ -33,12 +34,11 @@ export class GridChunkMesh {
     this.mesh.position.y = coords[1]
     this.mesh.position.z = coords[2]
     this.mesh.isPickable = false
-    this.mesh.parent = parent
     this.revision = -1
   }
 
   updateChunk(chunk: GridChunk) {
-    const revision = chunk[CHUNK_WIDTH * CHUNK_WIDTH] as number
+    const revision = getChunkRevision(chunk)
     if (revision === undefined || revision === this.revision) {
       return
     }
@@ -264,6 +264,7 @@ export class GridChunkMesh {
 
   dispose() {
     this.mesh.dispose()
+    this.mesh = null
     this.disposed = true
   }
 }

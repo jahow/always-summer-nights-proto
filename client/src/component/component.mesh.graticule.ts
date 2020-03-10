@@ -1,10 +1,10 @@
-import {ExtendedMesh} from '../utils/mesh/extended-mesh'
-import {getGenericMaterial} from '../utils/mesh/materials'
-import {generateTextMesh} from '../utils/mesh/text'
-import {AnchorTypes, RenderingGroup} from '../enums'
-import {getScene} from '../globals'
-import {CHUNK_WIDTH} from '../../../shared/src/environment'
-import {getViewExtent} from '../utils/view'
+import { ExtendedMesh } from '../utils/mesh/extended-mesh'
+import { getGenericMaterial } from '../utils/mesh/materials'
+import { generateTextMesh } from '../utils/mesh/text'
+import { AnchorTypes, RenderingGroup } from '../enums'
+import { getScene } from '../globals'
+import { CHUNK_WIDTH } from '../../../shared/src/environment'
+import { getViewExtent } from '../utils/view'
 import BaseMeshComponent from './component.mesh.base'
 
 export default class GraticuleMeshComponent extends BaseMeshComponent {
@@ -46,7 +46,7 @@ export default class GraticuleMeshComponent extends BaseMeshComponent {
     originMesh.parent = this.rootMesh
   }
 
-  getMesh() {
+  updateMesh() {
     // if (!getDebugMode()) {
     //   this.rootMesh.setEnabled(false)
     //   return
@@ -70,8 +70,6 @@ export default class GraticuleMeshComponent extends BaseMeshComponent {
 
       this.rebuildMesh()
     }
-
-    return this.rootMesh
   }
 
   private rebuildMesh() {

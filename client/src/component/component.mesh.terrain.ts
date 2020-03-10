@@ -23,7 +23,7 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
   updateChunk(key: string, chunk: GridChunk) {
     if (!this.chunkMeshes[key]) {
       const coords = chunkKeyToCoords(key)
-      this.chunkMeshes[key] = new GridChunkMesh(coords, this.rootMesh)
+      this.chunkMeshes[key] = new GridChunkMesh(coords)
     }
     this.chunkMeshes[key].updateChunk(chunk)
   }
@@ -35,7 +35,5 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
     }
   }
 
-  getMesh(): BABYLON.Mesh {
-    return this.rootMesh
-  }
+  updateMesh() {}
 }
