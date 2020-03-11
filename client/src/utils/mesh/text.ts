@@ -1,9 +1,9 @@
 import { Scene, Material, ShaderMaterial, DynamicTexture } from 'babylonjs'
 import * as TinySDF from 'tiny-sdf'
-import { arrayFromRange } from './utils.misc'
-import { ExtendedMesh, Color } from './utils.mesh'
-import { getScene } from './globals'
-import { AnchorType, RenderingGroup } from './enums'
+import { arrayFromRange } from '../misc'
+import { ExtendedMesh, Color } from './extended-mesh'
+import { getScene } from '../../globals'
+import { AnchorType, RenderingGroup } from '../../enums'
 
 interface GlyphInfo {
   widthRatio: number // width / height

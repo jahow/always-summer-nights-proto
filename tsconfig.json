@@ -5,6 +5,16 @@
 		"target": "es6",
 		"allowJs": true,
 		"sourceMap": true,
-		"types": ["babylonjs", "node"]
-	}
+		"types": ["babylonjs", "node", "jest"],
+		"esModuleInterop": true,
+		"lib": [
+			"es6",
+			"es2015.core",
+			"dom"
+		]
+	},
+	"exclude": [
+		"**/*.test.ts",
+		"node_modules"
+	]
 }

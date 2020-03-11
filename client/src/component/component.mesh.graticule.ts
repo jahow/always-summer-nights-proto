@@ -1,13 +1,13 @@
-import { ExtendedMesh } from './utils.mesh'
-import { getViewExtent } from './utils.view'
-import { getGenericMaterial } from './mesh.materials'
-import { generateTextMesh } from './mesh.text'
-import { getScene } from './globals'
-import { CHUNK_WIDTH } from '../../shared/src/environment'
-import { getDebugMode } from './utils.misc'
-import { AnchorTypes, RenderingGroup } from './enums'
+import { ExtendedMesh } from '../utils/mesh/extended-mesh'
+import { getGenericMaterial } from '../utils/mesh/materials'
+import { generateTextMesh } from '../utils/mesh/text'
+import { AnchorTypes, RenderingGroup } from '../enums'
+import { getScene } from '../globals'
+import { CHUNK_WIDTH } from '../../../shared/src/environment'
+import { getViewExtent } from '../utils/view'
+import BaseMeshComponent from './component.mesh.base'
 
-export default class Graticule {
+export default class GraticuleMeshComponent extends BaseMeshComponent {
   positions: number[]
   colors: number[]
   indices: number[]
@@ -20,6 +20,8 @@ export default class Graticule {
   textMeshes: ExtendedMesh[]
 
   constructor() {
+    super()
+
     this.rootMesh = new BABYLON.Mesh('graticule root', getScene())
 
     this.mesh = new ExtendedMesh('graticule', getScene())
@@ -44,7 +46,7 @@ export default class Graticule {
     originMesh.parent = this.rootMesh
   }
 
-  update() {
+  updateMesh() {
     // if (!getDebugMode()) {
     //   this.rootMesh.setEnabled(false)
     //   return

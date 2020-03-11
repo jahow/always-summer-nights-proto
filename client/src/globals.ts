@@ -23,3 +23,15 @@ export function getEngine(): Engine {
 export function getCanvas(): HTMLCanvasElement {
   return canvas
 }
+
+let debugMode = false
+
+/**
+ * Debug mode
+ */
+export function toggleDebugMode() {
+  debugMode = !debugMode
+}
+export function getDebugMode(): boolean {
+  return debugMode
+}

@@ -10,12 +10,6 @@ export const AnchorTypes = {
 	TOPMIDDLE: [0.5, 1] as [number, number],
 	BOTTOMMIDDLE: [0.5, 0] as [number, number]
 }
-export enum ContentFlow {
-	ROW,
-	COL,
-	ROW_INVERSE,
-	COL_INVERSE
-}
 
 export enum RenderingGroup {
 	ENVIRONMENT = 0,

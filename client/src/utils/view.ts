@@ -1,22 +1,9 @@
-import { Camera, Vector3, UniversalCamera } from 'babylonjs'
-import { getCanvas, getEngine, getScene } from './globals'
-import { ViewExtent } from '../../shared/src/view'
-import {
-  CHUNK_HEIGHT,
-  CHUNK_WIDTH,
-  chunkCoordsToKey,
-  Coords
-} from '../../shared/src/environment'
-import { isKeyPressed, KeyCode } from './utils.input'
-import { handleViewMove } from './events.network'
-import { debounce, getDebugMode, throttle } from './utils.misc'
-import {
-  compareExtents,
-  addBufferToExtent,
-  copyExtent,
-  getChunksBySubtractingExtents
-} from '../../shared/src/view'
-import { getEnvironment } from './environment'
+import { Camera, UniversalCamera, Vector3 } from 'babylonjs'
+import { getCanvas, getScene } from '../globals'
+import { compareExtents, ViewExtent } from '../../../shared/src/view'
+import { CHUNK_HEIGHT, CHUNK_WIDTH } from '../../../shared/src/environment'
+import { sendEvent } from './network/events'
+import { throttle } from './misc'
 
 // unit per second
 const VIEW_PAN_SPEED = 100
@@ -79,20 +66,8 @@ export const updateView = throttle(
     // check if extent has changed
     newExtent = getViewExtent()
     if (!previousExtent || compareExtents(newExtent, previousExtent)) {
-      handleViewMove()
+      sendEvent('moveView', getViewExtent())
     }
-
-    // release meshes outside of previous extent (with buffer)
-    if (previousExtent) {
-      const toRelease = getChunksBySubtractingExtents(newExtent, previousExtent)
-      const grid = getEnvironment().getGrid()
-      for (let i = 0; i < toRelease.length; i++) {
-        grid.removeChunkByKey(
-          chunkCoordsToKey(toRelease[i][0], toRelease[i][1], toRelease[i][2])
-        )
-      }
-    }
-
     previousExtent = newExtent
   },
   400,

@@ -13,18 +13,6 @@ export function arrayFromRange(min: number, max: number) {
   return result
 }
 
-let debugMode = false
-
-/**
- * Debug mode
- */
-export function toggleDebugMode() {
-  debugMode = !debugMode
-}
-export function getDebugMode(): boolean {
-  return debugMode
-}
-
 export function debounce(func: () => any, wait: number, immediate?: boolean) {
   let timeout: number
   return function() {

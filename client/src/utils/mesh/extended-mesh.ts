@@ -1,6 +1,6 @@
 import { VertexBuffer, Mesh, Scene, Node } from 'babylonjs'
 import Vector3 = BABYLON.Vector3
-import { Coords, SurfaceShape } from '../../shared/src/environment'
+import { Coords, SurfaceShape } from '../../../../shared/src/environment'
 
 export type Color = [number, number, number, number]
 
@@ -41,16 +41,20 @@ export class ExtendedMesh extends Mesh {
     clonePhysicsImpostor?: boolean
   ) {
     super(name, scene, parent, source, doNotCloneChildren, clonePhysicsImpostor)
-    this.clearVertices()
-  }
-
-  clearVertices() {
     this._tempArrays = {
       positions: new Array<number>(),
       colors: new Array<number>(),
       uvs: new Array<number>(),
       indices: new Array<number>()
     }
+    this.clearVertices()
+  }
+
+  clearVertices() {
+    this._tempArrays.positions.length = 0
+    this._tempArrays.colors.length = 0
+    this._tempArrays.uvs.length = 0
+    this._tempArrays.indices.length = 0
     this._currentIndices = {
       positions: 0,
       colors: 0,
@@ -148,7 +152,7 @@ export class ExtendedMesh extends Mesh {
       properties.maxU || 0,
       properties.maxV || 0,
       properties.minU || 0,
-      properties.minV || 0
+      properties.maxV || 0
     )
 
     properties.backwards
@@ -486,5 +490,9 @@ export class ExtendedMesh extends Mesh {
     }
 
     return this
+  }
+
+  dispose(...args) {
+    super.dispose(...args)
   }
 }

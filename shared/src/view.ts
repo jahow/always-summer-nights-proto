@@ -62,6 +62,23 @@ export function getChunksInExtent(extent: ViewExtent): Coords[] {
   return coords
 }
 
+export function isChunkInExtent(extent: ViewExtent, chunkCoords: Coords) {
+  const minX = Math.floor(extent.minX / CHUNK_WIDTH) * CHUNK_WIDTH
+  const minY = Math.floor(extent.minY / CHUNK_HEIGHT) * CHUNK_HEIGHT
+  const minZ = Math.floor(extent.minZ / CHUNK_WIDTH) * CHUNK_WIDTH
+  const maxX = Math.ceil(extent.maxX / CHUNK_WIDTH) * CHUNK_WIDTH
+  const maxY = Math.ceil(extent.maxY / CHUNK_HEIGHT) * CHUNK_HEIGHT
+  const maxZ = Math.ceil(extent.maxZ / CHUNK_WIDTH) * CHUNK_WIDTH
+  return (
+    chunkCoords[0] >= minX &&
+    chunkCoords[0] <= maxX &&
+    chunkCoords[1] >= minY &&
+    chunkCoords[1] <= maxY &&
+    chunkCoords[2] >= minZ &&
+    chunkCoords[2] <= maxZ
+  )
+}
+
 /**
  * Returns an array of chunks that are contained in extent2
  * but not in extent1; useful for sending only new chunks
