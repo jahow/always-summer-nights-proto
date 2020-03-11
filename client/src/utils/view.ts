@@ -20,9 +20,6 @@ export function initView() {
     getScene()
   )
   camera.setTarget(new Vector3(0, 0, 0))
-
-  // TEMP: camera has default controls
-  getCamera().attachControl(getCanvas())
 }
 
 export function getCamera(): Camera {
@@ -74,3 +71,7 @@ export const updateView = throttle(
   false,
   true
 )
+
+export function moveView(deltaX: number, deltaY: number, deltaZ: number) {
+  camera.position.addInPlace(new Vector3(deltaX, deltaY, deltaZ))
+}

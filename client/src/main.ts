@@ -4,6 +4,7 @@ import Entity from './entity/entity'
 import Application from './app/app'
 import TerrainMeshComponent from './component/component.mesh.terrain'
 import TerrainEnvironmentComponent from './component/component.environment.terrain'
+import ViewInputComponent from './component/component.input.view'
 
 export default function init() {
   initGlobals()
@@ -23,6 +24,9 @@ export default function init() {
   const terrain = new Entity()
   terrain.addComponent(new TerrainMeshComponent())
   terrain.addComponent(new TerrainEnvironmentComponent())
-  terrain.ready()
   app.addEntity(terrain)
+
+  const testInput = new Entity()
+  testInput.addComponent(new ViewInputComponent())
+  app.addEntity(testInput)
 }

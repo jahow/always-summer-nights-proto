@@ -491,8 +491,4 @@ export class ExtendedMesh extends Mesh {
 
     return this
   }
-
-  dispose(...args) {
-    super.dispose(...args)
-  }
 }

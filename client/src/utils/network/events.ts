@@ -1,6 +1,9 @@
 import * as io from 'socket.io-client'
-import {decodeEnvironmentState, EnvironmentStateEncoded} from '../../../../shared/src/environment'
-import {getViewExtent} from '../view'
+import {
+  decodeEnvironmentState,
+  EnvironmentStateEncoded
+} from '../../../../shared/src/environment'
+import { getViewExtent } from '../view'
 
 // socket init
 const socket = io()
@@ -10,10 +13,10 @@ socket.on('connect', () => {
 })
 
 type EventPayload = any
-type EventMessage = { name: string, args: EventPayload }
+type EventMessage = { name: string; args: EventPayload }
 type EventHandler = (payload: any) => void
 
-const handlers: {[key: string]: EventHandler[]} = {}
+const handlers: { [key: string]: EventHandler[] } = {}
 
 // downstream events handler
 export function addEventHandler(downEventName: string, handler: EventHandler) {

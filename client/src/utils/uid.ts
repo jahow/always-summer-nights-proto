@@ -1,5 +1,5 @@
-let counter = 0;
+let counter = 0
 
 export function getUid() {
-  return counter++;
+  return counter++
 }
