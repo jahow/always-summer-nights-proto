@@ -105,62 +105,19 @@ export enum KeyCode {
   Tab = 'Tab'
 }
 
-enum KeyState {
+export enum KeyState {
   RELEASED,
   PRESSED,
   FIRST_PRESSED
 }
+export interface PointerState {
+  x: number
+  y: number
+  isDown: boolean
+}
 export interface GlobalInputState {
   keyboard: { [key: string]: KeyState }
-  pointer: any
-}
-let inputState: GlobalInputState = {
-  keyboard: {},
-  pointer: {}
-}
-
-export function initInput() {
-  // bind events
-  window.addEventListener('keydown', evt => {
-    if (isKeyPressed(inputState, evt.code)) {
-      return
-    }
-    inputState = {
-      ...inputState,
-      keyboard: {
-        ...inputState.keyboard,
-        [evt.code]: KeyState.FIRST_PRESSED
-      }
-    }
-  })
-  window.addEventListener('keyup', evt => {
-    inputState = {
-      ...inputState,
-      keyboard: {
-        ...inputState.keyboard,
-        [evt.code]: KeyState.RELEASED
-      }
-    }
-  })
-}
-
-export function updateInputState() {
-  const newState = {
-    ...inputState
-  }
-  let changed = false
-  Object.keys(inputState.keyboard).forEach(key => {
-    if (inputState.keyboard[key] === KeyState.FIRST_PRESSED) {
-      changed = true
-      newState.keyboard[key] = KeyState.PRESSED
-    }
-  })
-
-  if (changed) inputState = newState
-}
-
-export function getInputState() {
-  return inputState
+  pointer: { [pointerId: string]: PointerState }
 }
 
 export function isKeyPressed(
@@ -173,4 +130,14 @@ export function isKeyPressed(
     (!firstPressed && keyState === KeyState.PRESSED) ||
     keyState === KeyState.FIRST_PRESSED
   )
+}
+
+export function hasPointerDown(state: GlobalInputState) {
+  for (const pointerId in state.pointer) {
+    if (state.pointer[pointerId].isDown) return true
+  }
+  return false
+}
+export function getFirstPointer(state: GlobalInputState) {
+  return state.pointer[Object.keys(state.pointer)[0]]
 }

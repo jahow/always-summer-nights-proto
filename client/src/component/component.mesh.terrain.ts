@@ -5,6 +5,7 @@ import { getScene } from '../globals'
 import BaseMeshComponent from './component.mesh.base'
 import Entity from '../entity/entity'
 import { ExtendedMesh } from '../utils/mesh/extended-mesh'
+import TerrainInputComponent from './component.input.terrain'
 
 export default class TerrainMeshComponent extends BaseMeshComponent {
   chunkMeshes: {
@@ -13,6 +14,7 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
   previousExtent: ViewExtent
   rootMesh: BABYLON.Mesh
   entityId: number
+  terrainInputComp: TerrainInputComponent
   hitMesh: BABYLON.Mesh
 
   constructor() {
@@ -24,10 +26,12 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
     this.rootMesh = new BABYLON.Mesh('terrain root', getScene())
     this.hitMesh = BABYLON.Mesh.CreateBox('hit terrain', 4, getScene())
     this.hitMesh.setEnabled(false)
+    this.hitMesh.isPickable = false
   }
 
   attach(entity: Entity) {
     this.entityId = entity.getId()
+    this.terrainInputComp = entity.getComponent(TerrainInputComponent)
   }
 
   updateChunk(key: string, chunk: GridChunk) {
@@ -52,5 +56,7 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
   onPointerDown(mesh: ExtendedMesh, position: BABYLON.Vector3) {
     this.hitMesh.setEnabled(true)
     this.hitMesh.position = position
+    this.terrainInputComp.isDraggingTerrain = true
+    this.terrainInputComp.terrainDragOrigin = position
   }
 }

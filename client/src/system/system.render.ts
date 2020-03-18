@@ -72,6 +72,5 @@ export default class RenderSystem extends BaseSystem {
     this.pickedPosition = null
     this.pickedMesh = null
     this.pickedEntityId = null
-    this.pickedEvent = null
   }
 }

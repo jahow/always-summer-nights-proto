@@ -1,4 +1,3 @@
-import BaseComponent from './component.base'
 import { GlobalInputState, isKeyPressed, KeyCode } from '../utils/input'
 import BaseInputComponent from './component.input.base'
 import { moveView } from '../utils/view'
