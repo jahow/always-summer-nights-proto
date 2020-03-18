@@ -1,12 +1,15 @@
 import BaseSystem from './system.base'
 import Entity from '../entity/entity'
 import { Color3, DirectionalLight, Vector3 } from 'babylonjs'
-import { getScene } from '../globals'
+import { getCanvas, getScene } from '../globals'
 import { initView, updateView } from '../utils/view'
 import BaseMeshComponent from '../component/component.mesh.base'
+import { ExtendedMesh } from '../utils/mesh/extended-mesh'
 
 export default class RenderSystem extends BaseSystem {
-  meshes: BABYLON.Mesh[] = []
+  pickedMesh: ExtendedMesh
+  pickedEntityId: number
+  pickedPosition: Vector3
 
   constructor() {
     super()
@@ -24,6 +27,28 @@ export default class RenderSystem extends BaseSystem {
       getScene()
     )
     light2.diffuse = new Color3(0.8, 0.6, 0.4)
+
+    const handleDownEvent = () => {
+      const scene = getScene()
+      const pickResult = scene.pick(scene.pointerX, scene.pointerY)
+      if (!pickResult.hit) return
+
+      const mesh = pickResult.pickedMesh
+      const pos = pickResult.pickedPoint
+      if (
+        mesh &&
+        pos &&
+        mesh instanceof ExtendedMesh &&
+        mesh.getEntityId() !== null
+      ) {
+        this.pickedMesh = mesh
+        this.pickedEntityId = mesh.getEntityId()
+        this.pickedPosition = pos
+      }
+    }
+
+    getCanvas().addEventListener('mousedown', handleDownEvent)
+    getCanvas().addEventListener('pointerdown', handleDownEvent)
   }
 
   run(allEntities: Entity[]) {
@@ -33,9 +58,20 @@ export default class RenderSystem extends BaseSystem {
     for (let entity of allEntities) {
       if (!entity.hasComponent(BaseMeshComponent)) continue
 
-      entity.getComponent<BaseMeshComponent>(BaseMeshComponent).updateMesh()
+      const component = entity.getComponent<BaseMeshComponent>(
+        BaseMeshComponent
+      )
+      if (entity.getId() === this.pickedEntityId) {
+        component.onPointerDown(this.pickedMesh, this.pickedPosition)
+      }
+      component.updateMesh()
     }
 
     getScene().render()
+
+    this.pickedPosition = null
+    this.pickedMesh = null
+    this.pickedEntityId = null
+    this.pickedEvent = null
   }
 }

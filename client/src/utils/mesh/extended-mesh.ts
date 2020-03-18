@@ -31,6 +31,7 @@ export class ExtendedMesh extends Mesh {
     indices: number
   }
   _baseIndex: number
+  _entityId: number | null = null
 
   constructor(
     name: string,
@@ -48,6 +49,14 @@ export class ExtendedMesh extends Mesh {
       indices: new Array<number>()
     }
     this.clearVertices()
+  }
+
+  setEntityId(id: number) {
+    this._entityId = id
+  }
+
+  getEntityId(): number | null {
+    return this._entityId
   }
 
   clearVertices() {
