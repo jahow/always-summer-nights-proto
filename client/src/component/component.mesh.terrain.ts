@@ -15,7 +15,6 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
   rootMesh: BABYLON.Mesh
   entityId: number
   terrainInputComp: TerrainInputComponent
-  hitMesh: BABYLON.Mesh
 
   constructor() {
     super()
@@ -24,9 +23,6 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
     this.previousExtent = null
 
     this.rootMesh = new BABYLON.Mesh('terrain root', getScene())
-    this.hitMesh = BABYLON.Mesh.CreateBox('hit terrain', 4, getScene())
-    this.hitMesh.setEnabled(false)
-    this.hitMesh.isPickable = false
   }
 
   attach(entity: Entity) {
@@ -54,9 +50,6 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
   updateMesh() {}
 
   onPointerDown(mesh: ExtendedMesh, position: BABYLON.Vector3) {
-    this.hitMesh.setEnabled(true)
-    this.hitMesh.position = position
-    this.terrainInputComp.isDraggingTerrain = true
-    this.terrainInputComp.terrainDragOrigin = position
+    this.terrainInputComp.startDragging(position)
   }
 }

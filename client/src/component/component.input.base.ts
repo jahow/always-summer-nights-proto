@@ -6,5 +6,5 @@ export default class BaseInputComponent extends BaseComponent {
     super()
   }
 
-  receiveInput(inputState: GlobalInputState, changed: boolean) {}
+  receiveInput(inputState: GlobalInputState, prevState: GlobalInputState) {}
 }

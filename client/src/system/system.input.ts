@@ -54,6 +54,8 @@ export default class InputSystem extends BaseSystem {
           [event.pointerId]: {
             x: event.clientX,
             y: event.clientY,
+            deltaX: event.movementX,
+            deltaY: event.movementY,
             isDown: down !== undefined ? down : previousState
           }
         }
@@ -84,14 +86,13 @@ export default class InputSystem extends BaseSystem {
 
   run(allEntities: Entity[]) {
     this.updateInputState()
-    const changed = this.inputState !== this.prevState
 
     for (let entity of allEntities) {
       if (!entity.hasComponent(BaseInputComponent)) continue
 
       entity
         .getComponent<BaseInputComponent>(BaseInputComponent)
-        .receiveInput(this.inputState, changed)
+        .receiveInput(this.inputState, this.prevState)
     }
 
     this.prevState = this.inputState

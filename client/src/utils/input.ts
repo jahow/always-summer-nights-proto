@@ -113,6 +113,8 @@ export enum KeyState {
 export interface PointerState {
   x: number
   y: number
+  deltaX: number
+  deltaY: number
   isDown: boolean
 }
 export interface GlobalInputState {
