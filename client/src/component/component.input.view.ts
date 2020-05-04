@@ -11,7 +11,7 @@ export default class ViewInputComponent extends BaseInputComponent {
     this.prevHandle = null
   }
 
-  receiveInput(inputState: GlobalInputState, changed: boolean) {
+  receiveInput(inputState: GlobalInputState, prevState: GlobalInputState) {
     if (hasPointerDown(inputState)) {
       // const pointer = getFirstPointer(inputState)
       // const posHandle =
