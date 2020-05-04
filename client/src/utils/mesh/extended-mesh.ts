@@ -1,6 +1,6 @@
 import { VertexBuffer, Mesh, Scene, Node } from 'babylonjs'
 import Vector3 = BABYLON.Vector3
-import { Coords, SurfaceShape } from '../../../../shared/src/environment'
+import {Coords, SurfaceShape} from '../../../../shared/src/terrain/model'
 
 export type Color = [number, number, number, number]
 

@@ -1,11 +1,13 @@
-import { ViewExtent } from '../../../shared/src/view'
-import { chunkKeyToCoords, GridChunk } from '../../../shared/src/environment'
-import { GridChunkMesh } from '../utils/mesh/gridchunk'
-import { getScene } from '../globals'
+import {ViewExtent} from '../../../shared/src/view'
+import {GridChunkMesh} from '../utils/mesh/gridchunk'
+import {getScene} from '../globals'
 import BaseMeshComponent from './component.mesh.base'
 import Entity from '../entity/entity'
-import { ExtendedMesh } from '../utils/mesh/extended-mesh'
+import {ExtendedMesh} from '../utils/mesh/extended-mesh'
 import TerrainInputComponent from './component.input.terrain'
+import {GridChunk, Terrain} from '../../../shared/src/terrain/model'
+import {chunkKeyToCoords} from '../../../shared/src/terrain/utils'
+import {getChunk} from '../../../shared/src/terrain/functions'
 
 export default class TerrainMeshComponent extends BaseMeshComponent {
   chunkMeshes: {
@@ -30,14 +32,14 @@ export default class TerrainMeshComponent extends BaseMeshComponent {
     this.terrainInputComp = entity.getComponent(TerrainInputComponent)
   }
 
-  updateChunk(key: string, chunk: GridChunk) {
+  updateChunk(key: string, terrain: Terrain) {
+    const coords = chunkKeyToCoords(key)
     if (!this.chunkMeshes[key]) {
-      const coords = chunkKeyToCoords(key)
       this.chunkMeshes[key] = new GridChunkMesh(coords)
       this.chunkMeshes[key].mesh.setEntityId(this.entityId)
       this.chunkMeshes[key].mesh.isPickable = true
     }
-    this.chunkMeshes[key].updateChunk(chunk)
+    this.chunkMeshes[key].updateChunk(getChunk(terrain, ...coords), terrain)
   }
 
   removeChunk(key: string) {

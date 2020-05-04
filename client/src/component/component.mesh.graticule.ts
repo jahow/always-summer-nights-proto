@@ -3,9 +3,9 @@ import { getGenericMaterial } from '../utils/mesh/materials'
 import { generateTextMesh } from '../utils/mesh/text'
 import { AnchorTypes, RenderingGroup } from '../enums'
 import { getScene } from '../globals'
-import { CHUNK_WIDTH } from '../../../shared/src/environment'
 import { getViewExtent } from '../utils/view'
 import BaseMeshComponent from './component.mesh.base'
+import {CHUNK_WIDTH} from '../../../shared/src/terrain/constants'
 
 export default class GraticuleMeshComponent extends BaseMeshComponent {
   positions: number[]

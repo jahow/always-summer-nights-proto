@@ -1,5 +1,7 @@
-import { Coords, CHUNK_HEIGHT, CHUNK_WIDTH } from './environment'
+
 import { cap } from './utility'
+import {CHUNK_HEIGHT, CHUNK_WIDTH} from './terrain/constants'
+import {Coords} from './terrain/model'
 
 /**
  * This represents a portion of the world seen by a player

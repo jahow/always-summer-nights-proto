@@ -2,15 +2,15 @@ import Entity from '../entity/entity'
 import BaseSystem from './system.base'
 import BaseEnvironmentComponent from '../component/component.environment.base'
 import {
-  chunkKeyToCoords,
   decodeEnvironmentState,
   EnvironmentState,
   EnvironmentStateEncoded,
-  mergeEnvironmentStates
+  mergeEnvironmentStates,
 } from '../../../shared/src/environment'
-import { addEventHandler } from '../utils/network/events'
-import { getViewExtent } from '../utils/view'
-import { isChunkInExtent } from '../../../shared/src/view'
+import {addEventHandler} from '../utils/network/events'
+import {getViewExtent} from '../utils/view'
+import {isChunkInExtent} from '../../../shared/src/view'
+import {chunkKeyToCoords} from '../../../shared/src/terrain/utils'
 
 export default class EnvironmentSystem extends BaseSystem {
   private last: EnvironmentState
@@ -26,7 +26,7 @@ export default class EnvironmentSystem extends BaseSystem {
       }
 
       // trim chunk outside of extent
-      const chunks = this.newest.chunks
+      const chunks = this.newest.terrain
       const extent = getViewExtent()
       for (let key in chunks) {
         if (!isChunkInExtent(extent, chunkKeyToCoords(key))) {
@@ -35,7 +35,7 @@ export default class EnvironmentSystem extends BaseSystem {
       }
       this.newest = {
         ...this.newest,
-        chunks
+        terrain: chunks
       }
     })
   }

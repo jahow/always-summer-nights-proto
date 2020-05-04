@@ -1,14 +1,7 @@
-import {
-  CHUNK_HEIGHT,
-  CHUNK_WIDTH,
-  chunkCoordsToKey,
-  Coords,
-  getShapeFromNeighbours,
-  GridChunk,
-  GridChunkBatch,
-  SurfaceShape
-} from '../../shared/src/environment'
 import NoiseGenerator from '../../shared/src/noise.js'
+import {Coords, GridChunk, SurfaceShape, Terrain} from '../../shared/src/terrain/model'
+import {chunkCoordsToKey, computeSmoothShapeFromNeighbours} from '../../shared/src/terrain/utils'
+import {CHUNK_HEIGHT, CHUNK_WIDTH} from '../../shared/src/terrain/constants'
 
 NoiseGenerator.seed(Math.random())
 
@@ -17,7 +10,7 @@ NoiseGenerator.seed(Math.random())
  * Chunks are stored using a key like so: 'x y z'
  */
 class TerrainManager {
-  savedChunks: GridChunkBatch
+  savedChunks: Terrain
 
   constructor() {
     // modified chunks are stored in a dict
@@ -34,8 +27,8 @@ class TerrainManager {
   }
 
   // return a batch of chunks from a list of coords
-  getChunks(coordsList: Coords[]): GridChunkBatch {
-    return coordsList.reduce((prev: GridChunkBatch, coords: Coords) => {
+  getChunks(coordsList: Coords[]): Terrain {
+    return coordsList.reduce((prev: Terrain, coords: Coords) => {
       const chunk = this.getChunk(coords)
       prev[chunkCoordsToKey(coords[0], coords[1], coords[2])] = chunk
       return prev
@@ -96,7 +89,7 @@ class TerrainManager {
             topShape:
               Math.floor(height - baseY) > CHUNK_HEIGHT - 1
                 ? SurfaceShape.FLAT
-                : getShapeFromNeighbours(
+                : computeSmoothShapeFromNeighbours(
                     topleft,
                     top,
                     topright,

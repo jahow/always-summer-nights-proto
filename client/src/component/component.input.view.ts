@@ -1,6 +1,5 @@
-import {getFirstPointer, GlobalInputState, hasPointerDown, isKeyPressed, KeyCode} from '../utils/input'
+import {GlobalInputState, hasPointerDown} from '../utils/input'
 import BaseInputComponent from './component.input.base'
-import {getCamera, moveView} from '../utils/view'
 
 export default class ViewInputComponent extends BaseInputComponent {
   prevHandle: BABYLON.Vector3

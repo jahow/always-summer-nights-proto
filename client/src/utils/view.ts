@@ -1,9 +1,9 @@
 import { Camera, UniversalCamera, Vector3 } from 'babylonjs'
 import { getCanvas, getScene } from '../globals'
 import { compareExtents, ViewExtent } from '../../../shared/src/view'
-import { CHUNK_HEIGHT, CHUNK_WIDTH } from '../../../shared/src/environment'
 import { sendEvent } from './network/events'
 import { throttle } from './misc'
+import {CHUNK_HEIGHT, CHUNK_WIDTH} from '../../../shared/src/terrain/constants'
 
 // unit per second
 const VIEW_PAN_SPEED = 100

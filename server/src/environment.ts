@@ -20,7 +20,7 @@ class Environment {
 
   getFullState(extent: ViewExtent): EnvironmentState {
     return {
-      chunks: this.terrain.getChunks(getChunksInExtent(extent)),
+      terrain: this.terrain.getChunks(getChunksInExtent(extent)),
       entities: []
     }
   }
@@ -30,7 +30,7 @@ class Environment {
     oldExtent: ViewExtent
   ): EnvironmentState {
     return {
-      chunks: this.terrain.getChunks(
+      terrain: this.terrain.getChunks(
         getChunksBySubtractingExtents(oldExtent, newExtent)
       ),
       entities: []

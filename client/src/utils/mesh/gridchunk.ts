@@ -1,16 +1,11 @@
-import { Color, ExtendedMesh } from './extended-mesh'
-import { getScene } from '../../globals'
-import { getTerrainMaterial } from './materials'
-import {
-  CellColumn,
-  CellColumnRange,
-  CHUNK_WIDTH,
-  Coords,
-  getChunkRevision,
-  GridChunk
-} from '../../../../shared/src/environment'
-import { addJobToQueue } from '../jobs'
-import { getSurfaceHeight } from '../environment/terrain'
+import {Color, ExtendedMesh} from './extended-mesh'
+import {getScene} from '../../globals'
+import {getTerrainMaterial} from './materials'
+import {addJobToQueue} from '../jobs'
+import {CellColumn, CellColumnRange, Coords, GridChunk, Terrain} from '../../../../shared/src/terrain/model'
+import {getChunkRevision} from '../../../../shared/src/terrain/utils'
+import {CHUNK_WIDTH} from '../../../../shared/src/terrain/constants'
+import {getSurfaceHeight} from '../../../../shared/src/terrain/functions'
 
 const tmpCrd1: Coords = [0, 0, 0]
 const tmpCrd2: Coords = [0, 0, 0]
@@ -37,7 +32,7 @@ export class GridChunkMesh {
     this.revision = -1
   }
 
-  updateChunk(chunk: GridChunk) {
+  updateChunk(chunk: GridChunk, terrain: Terrain) {
     const revision = getChunkRevision(chunk)
     if (revision === undefined || revision === this.revision) {
       return
@@ -47,11 +42,11 @@ export class GridChunkMesh {
     this.chunkInfo = chunk
 
     addJobToQueue(() => {
-      this.generateMesh()
+      this.generateMesh(terrain)
     }, this)
   }
 
-  generateMesh() {
+  generateMesh(terrain: Terrain) {
     if (this.disposed) {
       return
     }
@@ -155,6 +150,7 @@ export class GridChunkMesh {
           // top shape
           // do nothing if we're not on the surface of the terrain!
           alt = getSurfaceHeight(
+            terrain,
             x + this.baseCoords[0],
             absMaxY,
             z + this.baseCoords[2],
@@ -184,6 +180,7 @@ export class GridChunkMesh {
             // top skirt
             // X+
             alt = getSurfaceHeight(
+              terrain,
               x + this.baseCoords[0] + 1,
               absMaxY,
               z + this.baseCoords[2],
@@ -202,6 +199,7 @@ export class GridChunkMesh {
             }
             // X-
             alt = getSurfaceHeight(
+              terrain,
               x + this.baseCoords[0] - 1,
               absMaxY,
               z + this.baseCoords[2],
@@ -220,6 +218,7 @@ export class GridChunkMesh {
             }
             // Z+
             alt = getSurfaceHeight(
+              terrain,
               x + this.baseCoords[0],
               absMaxY,
               z + this.baseCoords[2] + 1,
@@ -238,6 +237,7 @@ export class GridChunkMesh {
             }
             // Z-
             alt = getSurfaceHeight(
+              terrain,
               x + this.baseCoords[0],
               absMaxY,
               z + this.baseCoords[2] - 1,
